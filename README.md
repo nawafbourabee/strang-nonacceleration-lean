@@ -9,7 +9,7 @@ Nawaf Bou-Rabee, arXiv:2608.25279.
 
 ## Scope
 
-The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, the cycle geometry of Theorem 3.1(ii), and the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses. The main theorems of the paper are not themselves formalized.
+The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemma 3.2, the cycle geometry of Theorem 3.1(ii), and the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses. The main theorems of the paper are not themselves formalized.
 
 Reference numbers are those of the current paper source (`obabo_non_acceleration.tex`, September 8, 2026), taken from its `.aux` file. Citation numbers: [22] Goujaud, Taylor and Dieuleveut; [30] Leimkuhler, Paulin and Whalley; [6] Bou-Rabee, Cox and Schieven.
 
@@ -19,19 +19,19 @@ Each Lean file is named after the statement of the paper it covers (a dot in a s
 
 | File | Content |
 |---|---|
-| `StrangNonAcceleration/Corollary1_2.lean` | Corollary 1.2(i): the logarithmic inequalities and the integer n_star |
+| `StrangNonAcceleration/Corollary1_2.lean` | Two steps of the proof of Corollary 1.2(i): the logarithmic inequalities and the integer n_star (the corollary itself is not formalized) |
 | `StrangNonAcceleration/Corollary1_3.lean` | Deduction of Corollary 1.3 from Theorems 1.1 and 5.1 (both as hypotheses); the constants (1.11) |
 | `StrangNonAcceleration/Proposition2_1.lean` | Proposition 2.1 as a pathwise identity, the noise (2.3), the covariance scalars (2.4) |
 | `StrangNonAcceleration/Lemma2_2.lean` | Lemma 2.2: the Schur stability criterion, the matrices (2.7) to (2.9), the second assertion |
 | `StrangNonAcceleration/Theorem3_1.lean` | Theorem 3.1(ii): the cycling quadratic, identity (3.11), the attracting neighborhood of the cycle |
-| `StrangNonAcceleration/Lemma3_2.lean` | Lemma 3.2: the case m = 3 and the elementary steps (3.15) to (3.18) |
-| `StrangNonAcceleration/Lemma3_3.lean` | Lemma 3.3: smallness of u, Step 1 algebra and numerics, Step 2, Step 3 for m-bar = 3 |
-| `StrangNonAcceleration/Lemma4_4.lean` | Lemma 4.4(i): geometric decay from the spectral radius, the invariant tube, the error recursion |
+| `StrangNonAcceleration/Lemma3_2.lean` | Lemma 3.2 in full: the thresholds s_+, s_-, beta_- of [22, Notation B.1], the two bounds imported from [22] (Lemma B.2, and the bound from the proof of Lemma B.6 via Lemma B.7), and the overlap inequality (3.14) for every m >= 3 |
+| `StrangNonAcceleration/Lemma3_3.lean` | Steps of the proof of Lemma 3.3: smallness of u, the algebra and numerics of Step 1, Step 2, Step 3 for m-bar = 3 (the lemma itself is not formalized) |
+| `StrangNonAcceleration/Lemma4_4.lean` | Deterministic core of Lemma 4.4(i): geometric decay from the spectral radius, the invariant tube, the error recursion (parts (ii) and (iii) are not formalized) |
 | `StrangNonAcceleration/Section4_5.lean` | Section 4.5: the cycle points, the gradient identities (4.23), the Hessian bounds, the tuning |
 | `StrangNonAcceleration/Lemma4_6.lean` | Lemma 4.6: the exact three-cycle, (4.24), (4.25), the bootstrap to the tube |
-| `StrangNonAcceleration/Proposition4_7.lean` | Proposition 4.7: origin tube, disjointness, (4.26), (4.27), the constants in (4.28) |
-| `StrangNonAcceleration/Theorem5_1.lean` | Theorem 5.1: the tuning, the constants, the case n <= 24, the assembly of (5.1) |
-| `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 100 statements listed in the table below |
+| `StrangNonAcceleration/Proposition4_7.lean` | Deterministic steps of the proof of Proposition 4.7: origin tube, disjointness, (4.26), (4.27), the constants in (4.28) (the Gaussian tail bound and the union bound are not formalized) |
+| `StrangNonAcceleration/Theorem5_1.lean` | Theorem 5.1: the tuning, the constants, the case n <= 24, and the assembly of (5.1) conditional on the two imported estimates |
+| `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 113 statements listed in the table below |
 
 ## Build
 
@@ -106,8 +106,14 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 | `I0_one_eq_I01`, `I0_one_neg_of_Pcyc_neg` | Theorem3_1.lean | P_m < 0 implies I_{0,1} < 0 via (3.11) | formalized |
 | `theorem_3_1_ii_of_Pcyc` | Theorem3_1.lean | Theorem 3.1(ii) from P_m(s, beta; kappa) < 0 | conditional on `hp` (as above) |
 | `sqrt5_bounds` | Lemma3_2.lean | bounds on sqrt 5 (used in Lemmas 3.2 and 3.3) | formalized |
-| `lemma_3_2_m3`, `lemma_3_2_m3'` | Lemma3_2.lean | Lemma 3.2, case m = 3 | formalized |
-| `lemma_3_2_identity`, `one_div_one_add_le`, `cos_two_pi_div_five`, `inv_cos_two_pi_div_five_add_two` | Lemma3_2.lean | Lemma 3.2, m >= 4, elementary steps (3.15) to (3.18) | formalized |
+| `θm`, `Acoef`, `Disc`, `sMinus`, `sPlus`, `βMinus` | Lemma3_2.lean | theta_m = 2 pi/m; A_m and B_m^2 of (3.15); the thresholds s_-(beta, m; kappa), s_+(beta, m; kappa) and beta_-(m; kappa) of [22, Notation B.1] (beta_- as the larger root of beta -> B_m^2) | definition |
+| `Pcyc_eq_mul_roots` | Lemma3_2.lean | P_m(s, beta; kappa) = (s - s_-)(s - s_+) when the roots are real | formalized |
+| `Disc_nonneg_of_βMinus_le`, `le_βMinus_of_Disc_nonpos` | Lemma3_2.lean | the roots are real for beta >= beta_-(m; kappa); B_m^2(beta_0) <= 0 implies beta_0 <= beta_-(m; kappa) | formalized |
+| `Disc_at_β0_nonpos`, `βMinus_ge` | Lemma3_2.lean | [22, Lemma B.2] as used in the proof: beta_-(m+1; kappa) >= cos theta_{m+1} (1 + sqrt u xi_{m+1}) for m >= 4 | formalized |
+| `cos_θm_lt`, `sin_succ_ge`, `one_sub_cos_ratio`, `xi_bound` | Lemma3_2.lean | cos theta_m < cos theta_{m+1}; concavity of sin; (1 - cos theta_m) <= ((m+1)/m)^2 (1 - cos theta_{m+1}); the bound xi_{m+1} + 2(1 - cos theta_m)/xi_{m+1} <= 3 + sqrt 5 for m >= 4 (the elementary bound from the proof of [22, Lemma B.6] via [22, Lemma B.7]) | formalized |
+| `lemma_3_2_m3`, `lemma_3_2_m3'`, `key_m3` | Lemma3_2.lean | (3.17) in the case m = 3: u^2 - 3u + 1 > 0 | formalized |
+| `lemma_3_2_identity`, `one_div_one_add_le`, `cos_two_pi_div_five`, `inv_cos_two_pi_div_five_add_two`, `add_inv_antitone`, `key_ge4` | Lemma3_2.lean | (3.17) in the case m >= 4, through the elementary steps (3.15) to (3.18) | formalized |
+| `lemma_3_2` | Lemma3_2.lean | Lemma 3.2, inequality (3.14): s_-(beta, m; kappa) < s_+(beta, m+1; kappa) for m >= 3, beta in (0, 1), beta >= beta_-(m+1; kappa), kappa^{-1} < ((3 - sqrt 5)/4)^2 | formalized |
 | `C_GTD_gt_27`, `u_small` | Lemma3_3.lean | Lemma 3.3, smallness of u = 1/kappa | formalized |
 | `frac_anti`, `frac_identity`, `ell`, `ell_q`, `step1_numerics`, `ell_strictAnti` | Lemma3_3.lean | Lemma 3.3, Step 1, algebra and numerics | formalized |
 | `lemma33_step2` | Lemma3_3.lean | Lemma 3.3, Step 2, the inequality (1-rho)(rho-beta)/rho > (50/3)u(1-beta) | formalized |
@@ -138,7 +144,7 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 
 ### Not formalized
 
-The following material of the paper has no Lean counterpart. Section 1: Theorem 1.1; in Corollary 1.2(i), the constants c_1, c_2, c; Corollary 1.2(ii); Corollary 1.5. Section 2: in Proposition 2.1, that the noise zeta_k is Gaussian and independent; in the second assertion of Lemma 2.2, the passage from an invariant law to the functional equation of its characteristic function. Section 3: Theorem 3.1(i), the representation (3.5) of psi, imported from [22, Theorem 3.5, Section B.1]; in Lemma 3.2 for m >= 4, the parts invoking [22, Lemma B.2, Lemma B.7]; in Lemma 3.3, the level-set bound (3.20) of Step 1 from [22, Corollary 2.3, Lemma 2.4], the parts of Step 2 invoking [22, Lemma B.8], and Step 3 for m-bar >= 4, which invokes [22, Lemma B.9] and Lemma 3.2; Proposition 3.4 (mollification, (3.25) to (3.28)). Section 4: Lemma 4.1, Proposition 4.2, Corollary 4.3; in Lemma 4.4, the passage from the full-cycle product to the partial products Psi_j(k, l) in (4.8), and parts (ii) and (iii) (total variation separation, union bound); Theorem 4.5 (existence and uniqueness of the invariant law, metastability, (4.13) to (4.22)); in Proposition 4.7, the Gaussian tail bound and the union bound. Section 5: in Theorem 5.1, the contraction estimate of [30] and the regularization estimate of [6]. Sections 6 and 7 and Appendices A and B entirely: Lemma 6.1, Proposition 6.2, Theorem 6.3, Corollary 6.4, Proposition 6.5, Theorem 6.6, Corollary 6.7; Proposition A.1 and (A.1) to (A.11); Proposition B.1, (B.1), (B.2).
+The following material of the paper has no Lean counterpart. Section 1: Theorem 1.1; in Corollary 1.2(i), the constants c_1, c_2, c; Corollary 1.2(ii); Corollary 1.5. Section 2: in Proposition 2.1, that the noise zeta_k is Gaussian and independent; in the second assertion of Lemma 2.2, the passage from an invariant law to the functional equation of its characteristic function. Section 3: Theorem 3.1(i), the representation (3.5) of psi, imported from [22, Theorem 3.5, Section B.1]; in Lemma 3.3, the level-set bound (3.20) of Step 1 from [22, Corollary 2.3, Lemma 2.4], the parts of Step 2 invoking [22, Lemma B.8], and Step 3 for m-bar >= 4, which invokes [22, Lemma B.9] and Lemma 3.2; Proposition 3.4 (mollification, (3.25) to (3.28)). Section 4: Lemma 4.1, Proposition 4.2, Corollary 4.3; in Lemma 4.4, the passage from the full-cycle product to the partial products Psi_j(k, l) in (4.8), and parts (ii) and (iii) (total variation separation, union bound); Theorem 4.5 (existence and uniqueness of the invariant law, metastability, (4.13) to (4.22)); in Proposition 4.7, the Gaussian tail bound and the union bound. Section 5: in Theorem 5.1, the contraction estimate of [30] and the regularization estimate of [6]. Sections 6 and 7 and Appendices A and B entirely: Lemma 6.1, Proposition 6.2, Theorem 6.3, Corollary 6.4, Proposition 6.5, Theorem 6.6, Corollary 6.7; Proposition A.1 and (A.1) to (A.11); Proposition B.1, (B.1), (B.2).
 
 ## Archive and citation
 

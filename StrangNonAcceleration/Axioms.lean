@@ -58,6 +58,19 @@ import StrangNonAcceleration
 #print axioms OBABO.lemma_3_2_identity
 #print axioms OBABO.one_div_one_add_le
 #print axioms OBABO.inv_cos_two_pi_div_five_add_two
+#print axioms OBABO.Pcyc_eq_mul_roots
+#print axioms OBABO.Disc_nonneg_of_βMinus_le
+#print axioms OBABO.le_βMinus_of_Disc_nonpos
+#print axioms OBABO.Disc_at_β0_nonpos
+#print axioms OBABO.cos_θm_lt
+#print axioms OBABO.sin_succ_ge
+#print axioms OBABO.one_sub_cos_ratio
+#print axioms OBABO.βMinus_ge
+#print axioms OBABO.xi_bound
+#print axioms OBABO.key_m3
+#print axioms OBABO.add_inv_antitone
+#print axioms OBABO.key_ge4
+#print axioms OBABO.lemma_3_2
 -- Lemma3_3.lean
 #print axioms OBABO.u_small
 #print axioms OBABO.frac_anti
