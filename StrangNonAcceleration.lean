@@ -6,6 +6,7 @@ import StrangNonAcceleration.Lemma2_2
 import StrangNonAcceleration.Theorem3_1
 import StrangNonAcceleration.Lemma3_2
 import StrangNonAcceleration.Lemma3_3
+import StrangNonAcceleration.Proposition3_4
 import StrangNonAcceleration.Lemma4_4
 import StrangNonAcceleration.Section4_5
 import StrangNonAcceleration.Lemma4_6

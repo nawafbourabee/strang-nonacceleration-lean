@@ -102,6 +102,22 @@ import StrangNonAcceleration
 #print axioms OBABO.βMinus_le_of_ratio
 #print axioms OBABO.sMinus_le_bound
 #print axioms OBABO.lemma_3_3
+-- Proposition3_4.lean
+#print axioms OBABO.Section3.Mollify.hessian_bounds_of_mono_lip
+#print axioms OBABO.Section3.Mollify.hasFDerivAt_id_of_affine
+#print axioms OBABO.Section3.Mollify.integral_normed_smul_self
+#print axioms OBABO.Section3.Mollify.moll_strongMono
+#print axioms OBABO.Section3.Mollify.moll_lipschitz
+#print axioms OBABO.Section3.Mollify.moll_local_affine
+#print axioms OBABO.Section3.Mollify.moll_remainder
+#print axioms OBABO.Section3.Mollify.moll_contDiff
+#print axioms OBABO.Section3.Mollify.hasGradientAt_moll
+#print axioms OBABO.Section3.cycle_equation
+#print axioms OBABO.Section3.norm_gradPsi_sub_le
+#print axioms OBABO.Section3.hasFDerivAt_hbUpdate
+#print axioms OBABO.Section3.hasFDerivAt_hbUpdate_iterate
+#print axioms OBABO.Section3.spectralRadius_Amat_pow
+#print axioms OBABO.Section3.proposition_3_4
 -- Lemma4_4.lean
 #print axioms OBABO.Section3.geometric_decay_of_spectralRadius_lt_one
 #print axioms OBABO.Section3.duhamel
