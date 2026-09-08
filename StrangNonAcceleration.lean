@@ -12,3 +12,5 @@ import StrangNonAcceleration.Section4_5
 import StrangNonAcceleration.Lemma4_6
 import StrangNonAcceleration.Proposition4_7
 import StrangNonAcceleration.Theorem5_1
+import StrangNonAcceleration.Proposition6_2
+import StrangNonAcceleration.Proposition6_5

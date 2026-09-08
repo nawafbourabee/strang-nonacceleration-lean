@@ -30,4 +30,4 @@ jobs:
           if grep -v 'propext, Classical.choice, Quot.sound' axioms.txt | grep -q 'depends on axioms'; then
             echo 'unexpected axiom'; exit 1
           fi
-          test "$(grep -c 'depends on axioms' axioms.txt)" -eq 147
+          test "$(grep -c 'depends on axioms' axioms.txt)" -eq 163

@@ -7,7 +7,7 @@ Nawaf Bou-Rabee, arXiv:2608.25279.
 
 ## Scope
 
-The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemmas 3.2 and 3.3, the cycle geometry of Theorem 3.1(ii), the mollification of Proposition 3.4, and the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses.
+The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemmas 3.2 and 3.3, the cycle geometry of Theorem 3.1(ii), the mollification of Proposition 3.4, the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1, and the pathwise heavy-ball representations of Propositions 6.2 and 6.5 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses.
 
 Reference numbers are those of the current paper source (`obabo_non_acceleration.tex`, September 8, 2026), taken from its `.aux` file. Citation numbers: [22] Goujaud, Taylor and Dieuleveut; [30] Leimkuhler, Paulin and Whalley; [6] Bou-Rabee, Cox and Schieven.
 
@@ -31,7 +31,9 @@ Each Lean file is named after the statement of the paper it covers (a dot in a s
 | `StrangNonAcceleration/Lemma4_6.lean` | Lemma 4.6: the exact three-cycle, (4.24), (4.25), the bootstrap to the tube |
 | `StrangNonAcceleration/Proposition4_7.lean` | Deterministic steps of the proof of Proposition 4.7: origin tube, disjointness, (4.26), (4.27), the constants in (4.28) (the Gaussian tail bound and the union bound are not formalized) |
 | `StrangNonAcceleration/Theorem5_1.lean` | Theorem 5.1: the tuning, the constants, the case n <= 24, and the assembly of (5.1) conditional on the two imported estimates |
-| `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 147 statements listed in the table below |
+| `StrangNonAcceleration/Proposition6_2.lean` | Proposition 6.2 as a pathwise identity: the BAOAB step (6.3) to (6.5), the identities (6.10) and (6.11), the recursion (6.7) with the noise (6.8) for every k >= 1 and, through the auxiliary position of (6.6), for k = 0, and the covariance scalars (6.9) |
+| `StrangNonAcceleration/Proposition6_5.lean` | Proposition 6.5 as pathwise identities: the steps of ABOBA, AOBOA, BOAOB and OABAO, the identities Y_{m+1} - Y_m = h V_m of parts (i) and (ii), the four recursions (6.13), (6.14), (6.16) (with the first step through (6.15)) and (6.17), and the covariance scalars |
+| `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 163 statements listed in the table below |
 
 ## Build
 
@@ -60,11 +62,13 @@ Every statement in the table below reports only the three standard axioms of Lea
 'OBABO.Cycle.cycle_steps' depends on axioms: [propext, Classical.choice, Quot.sound]
 'OBABO.Cycle.lemma_4_6_origin' depends on axioms: [propext, Classical.choice, Quot.sound]
 'OBABO.Diffusive.γ_mul_h' depends on axioms: [propext, Classical.choice, Quot.sound]
+'OBABO.Section6.prop_6_2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'OBABO.Section6.prop_6_5_iv' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
 ## Correspondence table
 
-Status values: "formalized" means proved in Lean from Mathlib alone; "conditional on" lists the hypotheses of the Lean statement that record results not proved in Lean. Definitions are marked "definition". Names are given without the namespace prefix `OBABO.`; the further namespaces are `Section2` (Proposition2_1.lean, Lemma2_2.lean), `Section3` (Theorem3_1.lean, Lemma3_3.lean, Proposition3_4.lean, Lemma4_4.lean; the general mollification lemmas are in `Section3.Mollify`), `Cycle` (Section4_5.lean, Lemma4_6.lean, Proposition4_7.lean) and `Diffusive` (Theorem5_1.lean). The namespace names are those of the original development, kept so that the fully qualified Lean names are unchanged. The material of the paper without a Lean counterpart is listed after the table.
+Status values: "formalized" means proved in Lean from Mathlib alone; "conditional on" lists the hypotheses of the Lean statement that record results not proved in Lean. Definitions are marked "definition". Names are given without the namespace prefix `OBABO.`; the further namespaces are `Section2` (Proposition2_1.lean, Lemma2_2.lean), `Section3` (Theorem3_1.lean, Lemma3_3.lean, Proposition3_4.lean, Lemma4_4.lean; the general mollification lemmas are in `Section3.Mollify`), `Cycle` (Section4_5.lean, Lemma4_6.lean, Proposition4_7.lean), `Diffusive` (Theorem5_1.lean) and `Section6` (Proposition6_2.lean, Proposition6_5.lean). The namespace names are those of the original development, kept so that the fully qualified Lean names are unchanged. The material of the paper without a Lean counterpart is listed after the table.
 
 | Lean name | File | Paper statement | Status |
 |---|---|---|---|
@@ -162,10 +166,21 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 | `Diffusive.cstar_bounds`, `Diffusive.cDiff_pos`, `Diffusive.cDiff_lt`, `Diffusive.exp_const_lt`, `Diffusive.final_constant`, `Diffusive.pow_bound` | Theorem5_1.lean | Theorem 5.1, the constant 143 and the exponent c | formalized |
 | `Diffusive.small_n` | Theorem5_1.lean | Theorem 5.1, the case n <= 24 | formalized |
 | `Diffusive.theorem_5_1_assembly` | Theorem5_1.lean | Theorem 5.1, assembly of the TV bound (5.1) | conditional on `hcontr` ([30, Theorem 5.2, Proposition 2.4]) and `hreg` ([6, Theorem 3.2, Corollary 3.3]) |
+| `Section6.stepBAOAB`, `Section6.IsChainBAOAB`, `Section6.ζB` | Proposition6_2.lean | the BAOAB step (6.3) to (6.5), the chain, the noise (6.8) | definition |
+| `Section6.eq_6_10`, `Section6.eq_6_11` | Proposition6_2.lean | (6.10), (6.11) | formalized |
+| `Section6.prop_6_2`, `Section6.prop_6_2_first` | Proposition6_2.lean | Proposition 6.2, the recursion (6.7) with the noise (6.8), for k >= 1 and, under (6.6), for k = 0, as a pathwise identity | formalized |
+| `Section6.covariance_scalars_BAOAB` | Proposition6_2.lean | (6.9), scalar form | formalized |
+| `Section6.stepABOBA`, `Section6.IsChainABOBA`, `Section6.stepAOBOA`, `Section6.IsChainAOBOA`, `Section6.stepBOAOB`, `Section6.IsChainBOAOB`, `Section6.stepOABAO`, `Section6.IsChainOABAO`, `Section6.χ` | Proposition6_5.lean | the steps and chains of ABOBA, AOBOA, BOAOB and OABAO; the combined noise chi_m of Proposition 6.5(iv) | definition |
+| `Section6.ABOBA_Y_diff`, `Section6.AOBOA_Y_diff` | Proposition6_5.lean | Proposition 6.5(i), (ii): Y_{m+1} - Y_m = h V_m for the force-evaluation points | formalized |
+| `Section6.prop_6_5_i` | Proposition6_5.lean | Proposition 6.5(i), the recursion (6.13), as a pathwise identity | formalized |
+| `Section6.prop_6_5_ii` | Proposition6_5.lean | Proposition 6.5(ii), the recursion (6.14), as a pathwise identity | formalized |
+| `Section6.prop_6_5_iii`, `Section6.prop_6_5_iii_first` | Proposition6_5.lean | Proposition 6.5(iii), the recursion (6.16) for k >= 1 and, under (6.15), for k = 0, as a pathwise identity | formalized |
+| `Section6.prop_6_5_iv` | Proposition6_5.lean | Proposition 6.5(iv), the recursion (6.17), as a pathwise identity | formalized |
+| `Section6.covariance_scalar_ABOBA`, `Section6.covariance_scalar_AOBOA`, `Section6.covariance_scalars_BOAOB`, `Section6.covariance_scalars_OABAO` | Proposition6_5.lean | Proposition 6.5, the covariance scalars of the four noise sequences (including the cold-start covariance of (iii) and the covariances (6.9) for (iv)) | formalized |
 
 ### Not formalized
 
-The following material of the paper has no Lean counterpart. Section 1: Theorem 1.1; in Corollary 1.2(i), the constants c_1, c_2, c; Corollary 1.2(ii); Corollary 1.5. Section 2: in Proposition 2.1, that the noise zeta_k is Gaussian and independent; in the second assertion of Lemma 2.2, the passage from an invariant law to the functional equation of its characteristic function. Section 3: Theorem 3.1(i), the representation (3.5) of psi, imported from [22, Theorem 3.5, Section B.1]. Section 4: Lemma 4.1, Proposition 4.2, Corollary 4.3; in Lemma 4.4, the passage from the full-cycle product to the partial products Psi_j(k, l) in (4.8), and parts (ii) and (iii) (total variation separation, union bound); Theorem 4.5 (existence and uniqueness of the invariant law, metastability, (4.13) to (4.22)); in Proposition 4.7, the Gaussian tail bound and the union bound. Section 5: in Theorem 5.1, the contraction estimate of [30] and the regularization estimate of [6]. Sections 6 and 7 and Appendices A and B entirely: Lemma 6.1, Proposition 6.2, Theorem 6.3, Corollary 6.4, Proposition 6.5, Theorem 6.6, Corollary 6.7; Proposition A.1 and (A.1) to (A.11); Proposition B.1, (B.1), (B.2).
+The following material of the paper has no Lean counterpart. Section 1: Theorem 1.1; in Corollary 1.2(i), the constants c_1, c_2, c; Corollary 1.2(ii); Corollary 1.5. Section 2: in Proposition 2.1, that the noise zeta_k is Gaussian and independent; in the second assertion of Lemma 2.2, the passage from an invariant law to the functional equation of its characteristic function. Section 3: Theorem 3.1(i), the representation (3.5) of psi, imported from [22, Theorem 3.5, Section B.1]. Section 4: Lemma 4.1, Proposition 4.2, Corollary 4.3; in Lemma 4.4, the passage from the full-cycle product to the partial products Psi_j(k, l) in (4.8), and parts (ii) and (iii) (total variation separation, union bound); Theorem 4.5 (existence and uniqueness of the invariant law, metastability, (4.13) to (4.22)); in Proposition 4.7, the Gaussian tail bound and the union bound. Section 5: in Theorem 5.1, the contraction estimate of [30] and the regularization estimate of [6]. Section 6: Lemma 6.1; in Propositions 6.2 and 6.5, that the driving variables are Gaussian and independent and the resulting distributional statements about the noise sequences (the covariances are recorded only as identities between scalar coefficients); Theorem 6.3, Corollary 6.4, Theorem 6.6, Corollary 6.7. Section 7 and Appendices A and B entirely: Proposition A.1 and (A.1) to (A.11); Proposition B.1, (B.1), (B.2).
 
 ## License
 

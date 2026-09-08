@@ -161,3 +161,21 @@ import StrangNonAcceleration
 #print axioms OBABO.Diffusive.small_n
 #print axioms OBABO.Diffusive.sqrt_step
 #print axioms OBABO.Diffusive.theorem_5_1_assembly
+-- Proposition6_2.lean
+#print axioms OBABO.Section6.eq_6_10
+#print axioms OBABO.Section6.eq_6_11
+#print axioms OBABO.Section6.prop_6_2
+#print axioms OBABO.Section6.prop_6_2_first
+#print axioms OBABO.Section6.covariance_scalars_BAOAB
+-- Proposition6_5.lean
+#print axioms OBABO.Section6.ABOBA_Y_diff
+#print axioms OBABO.Section6.prop_6_5_i
+#print axioms OBABO.Section6.covariance_scalar_ABOBA
+#print axioms OBABO.Section6.AOBOA_Y_diff
+#print axioms OBABO.Section6.prop_6_5_ii
+#print axioms OBABO.Section6.covariance_scalar_AOBOA
+#print axioms OBABO.Section6.prop_6_5_iii
+#print axioms OBABO.Section6.prop_6_5_iii_first
+#print axioms OBABO.Section6.covariance_scalars_BOAOB
+#print axioms OBABO.Section6.prop_6_5_iv
+#print axioms OBABO.Section6.covariance_scalars_OABAO
