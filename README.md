@@ -1,6 +1,6 @@
 # strang-nonacceleration-lean
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22662613.svg)](https://doi.org/10.5281/zenodo.22662613)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22662612.svg)](https://doi.org/10.5281/zenodo.22662612)
 
 Lean 4 companion to
 
@@ -145,9 +145,9 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 
 ## Archive and citation
 
-The release `v1.0.1-aap-submission` (the Lean sources of `v1.0-aap-submission`, commit `ba4e79a`, plus the file `.zenodo.json`) is archived on Zenodo with the version DOI [10.5281/zenodo.22662613](https://doi.org/10.5281/zenodo.22662613). The concept DOI [10.5281/zenodo.22662612](https://doi.org/10.5281/zenodo.22662612) always resolves to the latest archived version.
+Tagged releases of this repository are archived on Zenodo. The concept DOI [10.5281/zenodo.22662612](https://doi.org/10.5281/zenodo.22662612) always resolves to the latest archived version; each archived version also carries its own version DOI, listed on the Zenodo record.
 
-Suggested citation: N. Bou-Rabee, strang-nonacceleration-lean: Lean 4 companion to "Provable Non-Acceleration of Standard Strang Splittings of Kinetic Langevin Dynamics", version v1.0.1-aap-submission, Zenodo, 2026, doi:10.5281/zenodo.22662613.
+Suggested citation: N. Bou-Rabee, strang-nonacceleration-lean: Lean 4 companion to "Provable Non-Acceleration of Standard Strang Splittings of Kinetic Langevin Dynamics", Zenodo, 2026, doi:10.5281/zenodo.22662612.
 
 ## License
 
