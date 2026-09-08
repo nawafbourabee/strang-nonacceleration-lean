@@ -27,6 +27,7 @@ the gradient field of ψ enters only through its formula `x + (κ - 1) proj_C(x)
 -/
 import Mathlib.Analysis.InnerProductSpace.Projection.Minimal
 import Mathlib.Analysis.Convex.Hull
+import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import Mathlib.Algebra.BigOperators.Intervals
@@ -555,5 +556,44 @@ theorem theorem_3_1_ii_of_Pcyc (m : ℕ) (hm : 3 ≤ m) (s β κ : ℝ) (hs : 0 
   have hI := I0_neg_of_I0_one_neg m hm _ _ hb hI1
   exact ⟨rmax_pos m hm _ _ hb hI,
     fun t ht u hu => theorem_3_1_ii m hm _ _ κ hb hI p hp t ht u hu⟩
+
+/-! ## D. The metric projection onto `C` exists -/
+
+/-- `C` is nonempty (it contains `M x°_0`). -/
+lemma Cset_nonempty (m : ℕ) (hm : 1 ≤ m) (a b : ℝ) : (Cset m a b).Nonempty :=
+  ⟨_, mul_xc_mem_Cset m a b 0 (by omega)⟩
+
+/-- `C` is compact (the convex hull of finitely many points), hence complete. -/
+lemma isCompact_Cset (m : ℕ) (a b : ℝ) : IsCompact (Cset m a b) :=
+  (Set.finite_range _).isCompact_convexHull (𝕜 := ℝ)
+
+/-- The metric projection onto `C` exists: for every `x` there is a nearest point of `C`. -/
+theorem exists_isMetricProj (m : ℕ) (hm : 1 ≤ m) (a b : ℝ) :
+    ∃ p : ℂ → ℂ, IsMetricProj (Cset m a b) p := by
+  have h := exists_norm_eq_iInf_of_complete_convex (Cset_nonempty m hm a b)
+    (isCompact_Cset m a b).isClosed.isComplete (convex_Cset m a b)
+  choose p hp using h
+  exact ⟨p, fun x => ⟨(hp x).1, (hp x).2⟩⟩
+
+/-- A fixed choice of the metric projection onto `C`. -/
+noncomputable def projC (m : ℕ) (hm : 1 ≤ m) (a b : ℝ) : ℂ → ℂ :=
+  Classical.choose (exists_isMetricProj m hm a b)
+
+theorem isMetricProj_projC (m : ℕ) (hm : 1 ≤ m) (a b : ℝ) :
+    IsMetricProj (Cset m a b) (projC m hm a b) :=
+  Classical.choose_spec (exists_isMetricProj m hm a b)
+
+/-- **Theorem 3.1(ii)** for the metric projection `projC` itself (no hypothesis on `p`). -/
+theorem theorem_3_1_ii_projC (m : ℕ) (hm : 3 ≤ m) (s β κ : ℝ) (hs : 0 < s)
+    (hβ1 : β < 1) (hκ : 1 < κ)
+    (hP : OBABO.Pcyc s β κ (Real.cos (2 * π / m)) < 0) :
+    0 < rmax m hm (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m)) ∧
+    ∀ (t : ℕ), t < m → ∀ (u : ℂ),
+      ‖u‖ ≤ rmax m hm (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m)) →
+      gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m)))
+          (xc (2 * π / m) t + u)
+        = gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m)))
+          (xc (2 * π / m) t) + u :=
+  theorem_3_1_ii_of_Pcyc m hm s β κ hs hβ1 hκ hP _ (isMetricProj_projC m (by omega) _ _)
 
 end OBABO.Section3

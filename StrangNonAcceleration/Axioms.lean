@@ -63,6 +63,8 @@ import StrangNonAcceleration
 #print axioms OBABO.Section3.theorem_3_1_ii
 #print axioms OBABO.Section3.I0_one_neg_of_Pcyc_neg
 #print axioms OBABO.Section3.theorem_3_1_ii_of_Pcyc
+#print axioms OBABO.Section3.exists_isMetricProj
+#print axioms OBABO.Section3.theorem_3_1_ii_projC
 -- Lemma3_2.lean
 #print axioms OBABO.lemma_3_2_m3'
 #print axioms OBABO.lemma_3_2_identity
@@ -118,6 +120,7 @@ import StrangNonAcceleration
 #print axioms OBABO.Section3.hasFDerivAt_hbUpdate_iterate
 #print axioms OBABO.Section3.spectralRadius_Amat_pow
 #print axioms OBABO.Section3.proposition_3_4
+#print axioms OBABO.Section3.proposition_3_4_projC
 -- Lemma4_4.lean
 #print axioms OBABO.Section3.geometric_decay_of_spectralRadius_lt_one
 #print axioms OBABO.Section3.duhamel

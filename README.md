@@ -31,7 +31,7 @@ Each Lean file is named after the statement of the paper it covers (a dot in a s
 | `StrangNonAcceleration/Lemma4_6.lean` | Lemma 4.6: the exact three-cycle, (4.24), (4.25), the bootstrap to the tube |
 | `StrangNonAcceleration/Proposition4_7.lean` | Deterministic steps of the proof of Proposition 4.7: origin tube, disjointness, (4.26), (4.27), the constants in (4.28) (the Gaussian tail bound and the union bound are not formalized) |
 | `StrangNonAcceleration/Theorem5_1.lean` | Theorem 5.1: the tuning, the constants, the case n <= 24, and the assembly of (5.1) conditional on the two imported estimates |
-| `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 144 statements listed in the table below |
+| `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 147 statements listed in the table below |
 
 ## Build
 
@@ -112,6 +112,8 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 | `theorem_3_1_ii` | Theorem3_1.lean | Theorem 3.1(ii), identity (3.8) | conditional on `hp` (p is a metric projection onto C; the representation (3.5) of psi is Theorem 3.1(i)) |
 | `I0_one_eq_I01`, `I0_one_neg_of_Pcyc_neg` | Theorem3_1.lean | P_m < 0 implies I_{0,1} < 0 via (3.11) | formalized |
 | `theorem_3_1_ii_of_Pcyc` | Theorem3_1.lean | Theorem 3.1(ii) from P_m(s, beta; kappa) < 0 | conditional on `hp` (as above) |
+| `Cset_nonempty`, `isCompact_Cset`, `exists_isMetricProj`, `projC`, `isMetricProj_projC` | Theorem3_1.lean | C is nonempty and compact; the metric projection onto C exists (`projC` is a fixed choice) | formalized |
+| `theorem_3_1_ii_projC` | Theorem3_1.lean | Theorem 3.1(ii) for the metric projection `projC` of C: r_max > 0 and (3.8) | formalized |
 | `sqrt5_bounds` | Lemma3_2.lean | bounds on sqrt 5 (used in Lemmas 3.2 and 3.3) | formalized |
 | `θm`, `Acoef`, `Disc`, `sMinus`, `sPlus`, `βMinus` | Lemma3_2.lean | theta_m = 2 pi/m; A_m and B_m^2 of (3.15); the thresholds s_-(beta, m; kappa), s_+(beta, m; kappa) and beta_-(m; kappa) of [22, Notation B.1] (beta_- as the larger root of beta -> B_m^2) | definition |
 | `Pcyc_eq_mul_roots` | Lemma3_2.lean | P_m(s, beta; kappa) = (s - s_-)(s - s_+) when the roots are real | formalized |
@@ -137,7 +139,7 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 | `Section3.Mollify.integral_normed_smul_self`, `Section3.Mollify.moll_strongMono`, `Section3.Mollify.moll_lipschitz`, `Section3.Mollify.moll_local_affine`, `Section3.Mollify.moll_remainder`, `Section3.Mollify.moll_contDiff`, `Section3.Mollify.hasGradientAt_moll` | Proposition3_4.lean | proof of Proposition 3.4: the mollifier is centered; rho_eps * g inherits 1-strong monotonicity, the kappa-Lipschitz bound, the locally affine structure and the bounded remainder; it is C^infinity and is the gradient of rho_eps * psi | formalized |
 | `Section3.Mollify.hessian_bounds_of_mono_lip`, `Section3.Mollify.hasFDerivAt_id_of_affine` | Proposition3_4.lean | proof of Proposition 3.4: Hessian eigenvalue bounds [1, kappa] from monotonicity and Lipschitz continuity by the limiting argument; DU = Id on the balls B(x_j, r_0) | formalized |
 | `Section3.cycle_equation`, `Section3.norm_gradPsi_sub_le` | Proposition3_4.lean | the cycle equation (3.2) for the gradient field x + (kappa - 1) M x at the cycle points; the bound b_star = (kappa - 1) max_{y in C} abs(y) | formalized |
-| `Section3.proposition_3_4` | Proposition3_4.lean | Proposition 3.4: U in U_kappa^2 (C^infinity, gradient G 1-strongly monotone and kappa-Lipschitz, Hessian bounds), (3.25), (3.26) with r_0 = r_max/2, (3.27), DG = Id near the cycle | conditional on the representation of psi from Theorem 3.1(i) (gradient x + (kappa - 1) proj_C(x), 1-strongly monotone, kappa-Lipschitz) |
+| `Section3.proposition_3_4`, `Section3.proposition_3_4_projC` | Proposition3_4.lean | Proposition 3.4: U in U_kappa^2 (C^infinity, gradient G 1-strongly monotone and kappa-Lipschitz, Hessian bounds), (3.25), (3.26) with r_0 = r_max/2, (3.27), DG = Id near the cycle | conditional on the representation of psi from Theorem 3.1(i) only (gradient x + (kappa - 1) proj_C(x), 1-strongly monotone, kappa-Lipschitz); `proposition_3_4` takes any metric projection p as a further hypothesis, `proposition_3_4_projC` uses `projC` |
 | `Section3.hasFDerivAt_hbUpdate`, `Section3.hasFDerivAt_hbUpdate_iterate` | Proposition3_4.lean | the Jacobian (3.28) of the heavy-ball update at the cycle states and A_1^m for the m-step update (chain rule along the cycle) | formalized |
 | `Section3.spectralRadius_Amat_pow` | Proposition3_4.lean | rho(A_1(s, beta)^m) = rho(A_1(s, beta))^m <= rho_q(s, beta; kappa)^m < 1 | formalized |
 | `Section3.Ψ`, `Section3.duhamel` | Lemma4_4.lean | proof of Lemma 4.4, products Psi_j(k, l) and the Duhamel formula | formalized |

@@ -576,4 +576,32 @@ theorem proposition_3_4 (m : ℕ) (hm : 3 ≤ m) (s β κ : ℝ) (hs : 0 < s) (h
     intro t x hx
     exact (Mollify.hasFDerivAt_id_of_affine G (xc θ t) (r / 2) (hGaff t) x hx).fderiv
 
+/-- **Proposition 3.4** for the metric projection `projC` itself: the only remaining hypotheses
+are those of Theorem 3.1(i), the representation of `ψ`. -/
+theorem proposition_3_4_projC (m : ℕ) (hm : 3 ≤ m) (s β κ : ℝ) (hs : 0 < s) (hβ1 : β < 1)
+    (hκ : 1 < κ) (hP : OBABO.Pcyc s β κ (Real.cos (2 * π / m)) < 0)
+    (ψ : ℂ → ℝ)
+    (hψ : ∀ x, HasGradientAt ψ
+      (gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m))) x) x)
+    (hmono : ∀ x y, ‖x - y‖ ^ 2 ≤
+      ⟪gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m))) x
+        - gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m))) y,
+        x - y⟫_ℝ)
+    (hlip : ∀ x y,
+      ‖gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m))) x
+        - gradPsi κ (projC m (by omega) (aCoef s β κ (2 * π / m)) (bCoef s β κ (2 * π / m))) y‖
+        ≤ κ * ‖x - y‖) :
+    ∃ (U : ℂ → ℝ) (G : ℂ → ℂ) (r₀ b : ℝ), 0 < r₀ ∧
+      ContDiff ℝ (⊤ : ℕ∞) U ∧ (∀ x, HasGradientAt U (G x) x) ∧ ContDiff ℝ (⊤ : ℕ∞) G ∧
+      (∀ x y, ‖x - y‖ ^ 2 ≤ ⟪G x - G y, x - y⟫_ℝ) ∧
+      (∀ x y, ‖G x - G y‖ ≤ κ * ‖x - y‖) ∧
+      (∀ x v, ‖v‖ ^ 2 ≤ ⟪fderiv ℝ G x v, v⟫_ℝ ∧ ‖fderiv ℝ G x v‖ ≤ κ * ‖v‖) ∧
+      (∀ t : ℕ, xc (2 * π / m) (t + 2) = (1 + β) • xc (2 * π / m) (t + 1)
+        - β • xc (2 * π / m) t - s • G (xc (2 * π / m) (t + 1))) ∧
+      (∀ (t : ℕ) (u : ℂ), ‖u‖ ≤ r₀ → G (xc (2 * π / m) t + u) = G (xc (2 * π / m) t) + u) ∧
+      (∀ x, ‖G x - x‖ ≤ b) ∧
+      (∀ (t : ℕ), ∀ x ∈ Metric.ball (xc (2 * π / m) t) r₀,
+        fderiv ℝ G x = ContinuousLinearMap.id ℝ ℂ) :=
+  proposition_3_4 m hm s β κ hs hβ1 hκ hP _ (isMetricProj_projC m (by omega) _ _) ψ hψ hmono hlip
+
 end OBABO.Section3
