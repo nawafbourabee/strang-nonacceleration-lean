@@ -7,7 +7,7 @@ Nawaf Bou-Rabee, arXiv:2608.25279.
 
 ## Scope
 
-The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemmas 3.2 and 3.3, the cycle geometry of Theorem 3.1(ii), the mollification of Proposition 3.4, the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1, and the pathwise heavy-ball representations of Propositions 6.2 and 6.5 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses.
+The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemmas 3.2 and 3.3, the cycle geometry of Theorem 3.1(ii), the mollification of Proposition 3.4, the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1, and the pathwise heavy-ball representations of Propositions 6.2 and 6.5 are verified in Lean 4 with Mathlib. Within Sections 1 to 5, everything that is not a probabilistic argument is formalized, with three exceptions that enter as hypotheses, the representation (3.5) of the potential from [22, Theorem 3.5], the contraction estimate of [30, Theorem 5.2] and the regularization estimate of [6, Corollary 3.3], and with the following deterministic steps still open: the deductions of Theorem 1.1 and Corollaries 1.2 and 1.5 from the results of Sections 4 and 5, the constants of Corollary 1.2, and the bound (4.8) on the partial products in Lemma 4.4, which enters as a hypothesis. The probabilistic arguments (Lemma 4.1, Proposition 4.2, Corollary 4.3, Lemma 4.4(ii) and (iii), Theorem 4.5, the tail bounds of Proposition 4.7), the remainder of Section 6 (Lemma 6.1, the distributional statements of Propositions 6.2 and 6.5, Theorems 6.3 and 6.6, Corollaries 6.4 and 6.7), Section 7 and the appendices are not formalized.
 
 Reference numbers are those of the current paper source (`obabo_non_acceleration.tex`, September 8, 2026), taken from its `.aux` file. Citation numbers: [22] Goujaud, Taylor and Dieuleveut; [30] Leimkuhler, Paulin and Whalley; [6] Bou-Rabee, Cox and Schieven.
 
@@ -105,19 +105,19 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 | `identity_3_11_poly`, `identity_3_11` | Theorem3_1.lean | identity (3.11) | formalized |
 | `sin_eq_one_sub_cos_mul_cot` | Theorem3_1.lean | half-angle identity used for (3.9) | formalized |
 | `b_neg` | Theorem3_1.lean | b < 0 for m >= 3 (proof of Theorem 3.1) | formalized |
-| `ζ`, `xc`, `μ`, `I0`, `rmax`, `Cset`, `IsMetricProj`, `gradPsi`, `aCoef`, `bCoef` | Theorem3_1.lean | cycle points, M of (3.4), I_{0,j}, r_max of (3.13), C, metric projection, gradient field of (3.5), coefficients a and b | definition |
-| `I0_eq`, `I0_eq_half` | Theorem3_1.lean | closed form (3.9) of I_{0,j} | formalized |
-| `g_neg_of_g_neg`, `I0_neg_of_I0_one_neg` | Theorem3_1.lean | monotonicity (3.10) | formalized |
-| `xc_ne_one`, `ζ_pow_m`, `ζ_pow_mod`, `xc_factor`, `index_range`, `inner_xc_mul` | Theorem3_1.lean | proof of Theorem 3.1(ii): distinct cycle points, I_{t,j} = I_{0,j-t} | formalized |
-| `rmax_pos`, `rmax_le` | Theorem3_1.lean | r_max > 0 in (3.13) | formalized |
-| `projection_inequality` | Theorem3_1.lean | projection inequalities (3.12) at the vertices | formalized |
-| `variational_inequality`, `convex_halfspace_inner` | Theorem3_1.lean | projection inequalities (3.12) on all of C | formalized |
-| `nearest_point`, `nearest_unique`, `proj_const` | Theorem3_1.lean | proj_C(x_t + u) = M x_t for | u | <= r_max | formalized |
-| `theorem_3_1_ii` | Theorem3_1.lean | Theorem 3.1(ii), identity (3.8) | conditional on `hp` (p is a metric projection onto C; the representation (3.5) of psi is Theorem 3.1(i)) |
-| `I0_one_eq_I01`, `I0_one_neg_of_Pcyc_neg` | Theorem3_1.lean | P_m < 0 implies I_{0,1} < 0 via (3.11) | formalized |
-| `theorem_3_1_ii_of_Pcyc` | Theorem3_1.lean | Theorem 3.1(ii) from P_m(s, beta; kappa) < 0 | conditional on `hp` (as above) |
-| `Cset_nonempty`, `isCompact_Cset`, `exists_isMetricProj`, `projC`, `isMetricProj_projC` | Theorem3_1.lean | C is nonempty and compact; the metric projection onto C exists (`projC` is a fixed choice) | formalized |
-| `theorem_3_1_ii_projC` | Theorem3_1.lean | Theorem 3.1(ii) for the metric projection `projC` of C: r_max > 0 and (3.8) | formalized |
+| `Section3.ζ`, `Section3.xc`, `Section3.μ`, `Section3.I0`, `Section3.rmax`, `Section3.Cset`, `Section3.IsMetricProj`, `Section3.gradPsi`, `Section3.aCoef`, `Section3.bCoef` | Theorem3_1.lean | cycle points, M of (3.4), I_{0,j}, r_max of (3.13), C, metric projection, gradient field of (3.5), coefficients a and b | definition |
+| `Section3.I0_eq`, `Section3.I0_eq_half` | Theorem3_1.lean | closed form (3.9) of I_{0,j} | formalized |
+| `Section3.g_neg_of_g_neg`, `Section3.I0_neg_of_I0_one_neg` | Theorem3_1.lean | monotonicity (3.10) | formalized |
+| `Section3.xc_ne_one`, `Section3.ζ_pow_m`, `Section3.ζ_pow_mod`, `Section3.xc_factor`, `Section3.index_range`, `Section3.inner_xc_mul` | Theorem3_1.lean | proof of Theorem 3.1(ii): distinct cycle points, I_{t,j} = I_{0,j-t} | formalized |
+| `Section3.rmax_pos`, `Section3.rmax_le` | Theorem3_1.lean | r_max > 0 in (3.13) | formalized |
+| `Section3.projection_inequality` | Theorem3_1.lean | projection inequalities (3.12) at the vertices | formalized |
+| `Section3.variational_inequality`, `Section3.convex_halfspace_inner` | Theorem3_1.lean | projection inequalities (3.12) on all of C | formalized |
+| `Section3.nearest_point`, `Section3.nearest_unique`, `Section3.proj_const` | Theorem3_1.lean | proj_C(x_t + u) = M x_t for | u | <= r_max | formalized |
+| `Section3.theorem_3_1_ii` | Theorem3_1.lean | Theorem 3.1(ii), identity (3.8) | conditional on `hp` (p is a metric projection onto C; the representation (3.5) of psi is Theorem 3.1(i)) |
+| `Section3.I0_one_eq_I01`, `Section3.I0_one_neg_of_Pcyc_neg` | Theorem3_1.lean | P_m < 0 implies I_{0,1} < 0 via (3.11) | formalized |
+| `Section3.theorem_3_1_ii_of_Pcyc` | Theorem3_1.lean | Theorem 3.1(ii) from P_m(s, beta; kappa) < 0 | conditional on `hp` (as above) |
+| `Section3.Cset_nonempty`, `Section3.isCompact_Cset`, `Section3.exists_isMetricProj`, `Section3.projC`, `Section3.isMetricProj_projC` | Theorem3_1.lean | C is nonempty and compact; the metric projection onto C exists (`projC` is a fixed choice) | formalized |
+| `Section3.theorem_3_1_ii_projC` | Theorem3_1.lean | Theorem 3.1(ii) for the metric projection `projC` of C: r_max > 0 and (3.8) | formalized |
 | `sqrt5_bounds` | Lemma3_2.lean | bounds on sqrt 5 (used in Lemmas 3.2 and 3.3) | formalized |
 | `θm`, `Acoef`, `Disc`, `sMinus`, `sPlus`, `βMinus` | Lemma3_2.lean | theta_m = 2 pi/m; A_m and B_m^2 of (3.15); the thresholds s_-(beta, m; kappa), s_+(beta, m; kappa) and beta_-(m; kappa) of [22, Notation B.1] (beta_- as the larger root of beta -> B_m^2) | definition |
 | `Pcyc_eq_mul_roots` | Lemma3_2.lean | P_m(s, beta; kappa) = (s - s_-)(s - s_+) when the roots are real | formalized |
@@ -129,11 +129,11 @@ Status values: "formalized" means proved in Lean from Mathlib alone; "conditiona
 | `lemma_3_2` | Lemma3_2.lean | Lemma 3.2, inequality (3.14): s_-(beta, m; kappa) < s_+(beta, m+1; kappa) for m >= 3, beta in (0, 1), beta >= beta_-(m+1; kappa), kappa^{-1} < ((3 - sqrt 5)/4)^2 | formalized |
 | `C_GTD_gt_27`, `u_small` | Lemma3_3.lean | Lemma 3.3, smallness of u = 1/kappa | formalized |
 | `frac_anti`, `frac_identity`, `ell`, `ell_q`, `step1_numerics`, `ell_strictAnti` | Lemma3_3.lean | Lemma 3.3, Step 1, algebra and numerics | formalized |
-| `lemma33_step2` | Lemma3_3.lean | Lemma 3.3, Step 2, the inequality (1-rho)(rho-beta)/rho > (50/3)u(1-beta) | formalized |
-| `lemma33_step2_s_lower` | Lemma3_3.lean | Lemma 3.3, Step 2, inequality (3.21) | conditional on `hs` (s >= (1-rho)(1-beta/rho), from [22, Lemma 2.4]) |
+| `Section3.lemma33_step2` | Lemma3_3.lean | Lemma 3.3, Step 2, the inequality (1-rho)(rho-beta)/rho > (50/3)u(1-beta) | formalized |
+| `Section3.lemma33_step2_s_lower` | Lemma3_3.lean | Lemma 3.3, Step 2, inequality (3.21) | conditional on `hs` (s >= (1-rho)(1-beta/rho), from [22, Lemma 2.4]) |
 | `cos_two_pi_div_three`, `Pcyc_eq`, `le_larger_root`, `P3_at_edge`, `P3_at_edge_nonpos` | Lemma3_3.lean | Lemma 3.3, Step 3, case m-bar = 3, auxiliary facts | formalized |
 | `s_plus_3_ge` | Lemma3_3.lean | Lemma 3.3, Step 3, s_+(beta, 3) >= 2(1+beta)/kappa (direct proof from P_3 <= 0 at the stability edge) | formalized |
-| `lemma33_step3_m3` | Lemma3_3.lean | Lemma 3.3, Step 3, case m-bar = 3, by the paper's argument (roots sum to 2 beta + 1 + u(2 + beta) > 1); real roots (3.24) not needed for the inequality | formalized |
+| `Section3.lemma33_step3_m3` | Lemma3_3.lean | Lemma 3.3, Step 3, case m-bar = 3, by the paper's argument (roots sum to 2 beta + 1 + u(2 + beta) > 1); real roots (3.24) not needed for the inequality | formalized |
 | `one_sub_cos_ratio_le`, `cos_θm_mono` | Lemma3_3.lean | [22, Lemma B.7]: 1 - cos theta_K <= (3/2)(1 - cos theta_{K+1}) for K >= 2; monotonicity of cos theta_m | formalized |
 | `exists_m0` | Lemma3_3.lean | [22, Lemma B.8] with m_0 >= 3: a period with (2/3)(1 - beta) <= beta - cos theta_{m_0} <= (3/2)(1 - beta) | formalized |
 | `βMinus_le_of`, `βMinus_le_of_ratio` | Lemma3_3.lean | [22, Lemma B.9] as used: beta >= beta_-(m; kappa) when beta - cos theta_m >= (2/3)(1 - beta) and u <= 1/16 | formalized |
@@ -185,3 +185,23 @@ The following material of the paper has no Lean counterpart. Section 1: Theorem 
 ## License
 
 Apache License 2.0, see `LICENSE`.
+
+## Citation
+
+Tagged releases are archived on Zenodo under the concept DOI 10.5281/zenodo.22662612, which resolves to the latest archived version; each version carries its own DOI, listed on the Zenodo record.
+
+Suggested citation:
+
+N. Bou-Rabee, strang-nonacceleration-lean: Lean 4 companion to "Provable Non-Acceleration of Standard Strang Splittings of Kinetic Langevin Dynamics", version v1.2.0, Zenodo, 2026, doi:10.5281/zenodo.22662612
+
+```bibtex
+@software{BouRabee2026_strang_nonacceleration_lean,
+  author    = {Bou-Rabee, Nawaf},
+  title     = {strang-nonacceleration-lean: Lean 4 companion to ``Provable Non-Acceleration of Standard Strang Splittings of Kinetic Langevin Dynamics''},
+  version   = {v1.2.0},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.22662612},
+  url       = {https://github.com/nawafbourabee/strang-nonacceleration-lean}
+}
+```
