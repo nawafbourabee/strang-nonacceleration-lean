@@ -1,0 +1,16 @@
+name = "StrangNonAcceleration"
+version = "1.0.0"
+defaultTargets = ["StrangNonAcceleration"]
+
+[leanOptions]
+pp.unicode.fun = true
+relaxedAutoImplicit = false
+maxSynthPendingDepth = 3
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.34.0-rc2"
+
+[[lean_lib]]
+name = "StrangNonAcceleration"
