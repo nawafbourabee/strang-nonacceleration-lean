@@ -1,115 +1,205 @@
 /-
-Section 2 of arXiv:2608.25279v1 ("OBABO position as an exact noisy heavy-ball method"):
-the deterministic content.
+Lemma 2.2 of
 
-  A. Proposition 2.1 as a pathwise identity: for any real vector space, any gradient map,
-     and any noise sequences, the OBABO positions satisfy the two-step recursion (2.2)
-     with the noise term (2.3), including the first step through the auxiliary
-     position X_{-1} of (2.1); the covariance scalars (2.4).
-  B. The quadratic case: the phase-space matrix (2.7) and the noise matrix N of the
-     proof of Lemma 2.2 are read off the OBABO step; trace, determinant, characteristic
-     polynomial (2.8); the two-step position matrix A_λ(s,β) of (1.10); equality of
-     the complex spectra (2.9).
+  N. Bou-Rabee, Provable non-acceleration of standard Strang splittings of kinetic
+  Langevin dynamics, arXiv:2608.25279.
+
+  A. The Schur stability criterion for the two-step position matrix `A_lambda(s, beta)` of
+     (1.10): `0 < s < 2(1+beta)/kappa`, its form `h < 2/sqrt(kappa)` via (2.10), and the real
+     root `z_- <= -1` beyond the stability edge.
+  B. The quadratic case: the phase-space matrix (2.7) and the noise matrix `N` of the proof
+     of Lemma 2.2 are read off the OBABO step; trace, determinant, characteristic polynomial
+     (2.8); the two-step position matrix of (1.10); equality of the complex spectra (2.9).
   C. Lemma 2.2 on the actual matrices; the linear-algebra steps of its second assertion
-     (real root z_- ≤ -1, left eigenvector, det N = hσ² > 0, N^T w ≠ 0, the scalar
-     recursion Y_{k+1} = z_- Y_k + η_{k+1}), and the analytic contradiction that closes
+     (real root `z_- <= -1`, left eigenvector, `det N = h sigma^2 > 0`, `N^T w != 0`, the scalar
+     recursion `Y_{k+1} = z_- Y_k + eta_{k+1}`), and the analytic contradiction that closes
      the characteristic-function argument.
 
-Not formalized: the probabilistic statements of Proposition 2.1 (independence and
-Gaussianity of the ζ_k, covariance as an expectation) and the invariant-law and
-characteristic-function steps of the second assertion of Lemma 2.2.
+Not formalized: the passage from an invariant law to the functional equation of its
+characteristic function in the second assertion.
 -/
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
-import StrangNonAcceleration.Tier1
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+import Mathlib.Data.Complex.Basic
+import StrangNonAcceleration.Proposition2_1
 
 open Real Matrix
 
 namespace OBABO
-namespace Section2
 
-/-! ## A. Proposition 2.1: the pathwise heavy-ball identity -/
+/-! ## A. Lemma 2.2: Schur stability -/
 
-section pathwise
-
-variable {E : Type*} [AddCommGroup E] [Module ℝ E]
-
-/-- One OBABO step (1.4)-(1.6) with gradient map `g`, parameters `h, r, σ`, state `(x, v)`
-and noise inputs `ξ1, ξ2`; returns `(x⁺, v⁺)`. -/
-noncomputable def step (g : E → E) (h r σ : ℝ) (x v ξ1 ξ2 : E) : E × E :=
-  let va := r • v + σ • ξ1
-  let vb := va - (h / 2) • g x
-  let x' := x + h • vb
-  let vc := vb - (h / 2) • g x'
-  (x', r • vc + σ • ξ2)
-
-/-- The OBABO chain: `(X (k+1), V (k+1))` is obtained from `(X k, V k)` with the noises
-`ξ1 (k+1), ξ2 (k+1)`; the value `ξ2 0` is the auxiliary variable of Proposition 2.1. -/
-def IsChain (g : E → E) (h r σ : ℝ) (ξ1 ξ2 X V : ℕ → E) : Prop :=
-  ∀ k, (X (k + 1), V (k + 1)) = step g h r σ (X k) (V k) (ξ1 (k + 1)) (ξ2 (k + 1))
-
-/-- The noise term (2.3): `ζ_{k+1} = hσ (r ξ2_k + ξ1_{k+1})` (here `ζ k` is `ζ_{k+1}`). -/
-def ζ (h r σ : ℝ) (ξ1 ξ2 : ℕ → E) (k : ℕ) : E := (h * σ) • (r • ξ2 k + ξ1 (k + 1))
-
-/-- Equation (2.5): `X_{k+1} - X_k = h (r V_k + σ ξ1_{k+1} - (h/2) ∇U(X_k))`. -/
-theorem eq_2_5 {g : E → E} {h r σ : ℝ} {ξ1 ξ2 X V : ℕ → E}
-    (hc : IsChain g h r σ ξ1 ξ2 X V) (k : ℕ) :
-    X (k + 1) - X k = h • (r • V k + σ • ξ1 (k + 1) - (h / 2) • g (X k)) := by
-  have := congrArg Prod.fst (hc k)
-  simp only [step] at this
-  rw [this]; abel
-
-/-- Equation (2.6), multiplied by `h`: `h V_k = r ((X_k - X_{k-1}) - (h^2/2) ∇U(X_k)) + hσ ξ2_k`. -/
-theorem eq_2_6 {g : E → E} {h r σ : ℝ} {ξ1 ξ2 X V : ℕ → E}
-    (hc : IsChain g h r σ ξ1 ξ2 X V) (k : ℕ) :
-    h • V (k + 1) = r • ((X (k + 1) - X k) - (h ^ 2 / 2) • g (X (k + 1))) + (h * σ) • ξ2 (k + 1) := by
-  have h1 := congrArg Prod.fst (hc k)
-  have h2 := congrArg Prod.snd (hc k)
-  simp only [step] at h1 h2
-  rw [h2, h1]
-  module
-
-/-- Proposition 2.1 for `k ≥ 1`: the recursion (2.2), `X_{k+1} = X_k + β(X_k - X_{k-1}) - s∇U(X_k) + ζ_{k+1}`,
-with `β = r^2` and `s = h^2(1+β)/2`, holds pathwise for every noise sequence. -/
-theorem prop_2_1 {g : E → E} {h r σ : ℝ} {ξ1 ξ2 X V : ℕ → E}
-    (hc : IsChain g h r σ ξ1 ξ2 X V) (k : ℕ) :
-    X (k + 2) = X (k + 1) + (r ^ 2) • (X (k + 1) - X k)
-      - (h ^ 2 * (1 + r ^ 2) / 2) • g (X (k + 1)) + ζ h r σ ξ1 ξ2 (k + 1) := by
-  have h5 := eq_2_5 hc (k + 1)
-  have h6 := eq_2_6 hc k
-  have hV : h • (r • V (k + 1)) = r • (h • V (k + 1)) := smul_comm _ _ _
-  have : X (k + 2) = X (k + 1) + (X (k + 1 + 1) - X (k + 1)) := by abel
-  rw [this, h5, smul_sub, smul_add, hV, h6]
-  unfold ζ
-  module
-
-/-- Proposition 2.1, first step, through the auxiliary position `X_{-1}` of (2.1)
-(written `Xm1`): if `V_0 = r ((X_0 - X_{-1})/h - (h/2)∇U(X_0)) + σ ξ2_0`, then (2.2) holds at `k = 0`. -/
-theorem prop_2_1_first {g : E → E} {h r σ : ℝ} (hh : h ≠ 0) {ξ1 ξ2 X V : ℕ → E}
-    (hc : IsChain g h r σ ξ1 ξ2 X V) (Xm1 : E)
-    (h21 : V 0 = r • ((1 / h) • (X 0 - Xm1) - (h / 2) • g (X 0)) + σ • ξ2 0) :
-    X 1 = X 0 + (r ^ 2) • (X 0 - Xm1) - (h ^ 2 * (1 + r ^ 2) / 2) • g (X 0) + ζ h r σ ξ1 ξ2 0 := by
-  have h5 := eq_2_5 hc 0
-  have : X 1 = X 0 + (X (0 + 1) - X 0) := by abel
-  rw [this, h5, h21]
-  unfold ζ
-  have e : h * (r * (r * (1 / h))) = r ^ 2 := by field_simp
-  simp only [smul_sub, smul_add, smul_smul]
-  rw [e]
-  module
-
-/-- The covariance scalars (2.4): `h^2 σ^2 (1 + r^2) = h^2 (1 - β^2)` and `h^2 σ^2 = h^2 (1-β)`
-with `β = r^2`, `σ^2 = 1 - β`. -/
-theorem covariance_scalars (h r σ : ℝ) (hσ : σ ^ 2 = 1 - r ^ 2) :
-    h ^ 2 * σ ^ 2 * (1 + r ^ 2) = h ^ 2 * (1 - (r ^ 2) ^ 2) ∧ h ^ 2 * σ ^ 2 = h ^ 2 * (1 - r ^ 2) := by
+/-- Schur criterion for the real quadratic `z^2 - t z + β` with `0 < β < 1`:
+all complex roots have modulus `< 1` iff `|t| < 1 + β`.  This is the algebraic
+content of the criterion `|tr M| < 1 + det M < 2` used in the proof of Lemma 2.2,
+for the matrices `A_λ(s, β)` (trace `t = 1 + β - sλ`, determinant `β`). -/
+theorem schur_quadratic (t β : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1) :
+    (∀ z : ℂ, z ^ 2 - (t : ℂ) * z + (β : ℂ) = 0 → ‖z‖ < 1) ↔ |t| < 1 + β := by
   constructor
-  · rw [hσ]; ring
-  · rw [hσ]
+  · intro h
+    by_contra hcon
+    rw [not_lt] at hcon
+    -- a real root of modulus at least one exists
+    have hΔ : 0 ≤ t ^ 2 - 4 * β := by
+      have : (1 + β) ^ 2 ≤ t ^ 2 := by
+        have := sq_abs t
+        nlinarith [abs_nonneg t]
+      nlinarith
+    rcases le_abs'.mp hcon with ht | ht
+    · -- t ≤ -(1+β): the root (t - √Δ)/2 is ≤ -1
+      set z : ℝ := (t - √(t ^ 2 - 4 * β)) / 2 with hz
+      have hroot : z ^ 2 - t * z + β = 0 := by
+        rw [hz]; have := Real.sq_sqrt hΔ; nlinarith
+      have hz1 : z ≤ -1 := by
+        have hs := Real.sqrt_nonneg (t ^ 2 - 4 * β)
+        have hsq := Real.sq_sqrt hΔ
+        rw [hz]
+        by_cases ht2 : t + 2 ≤ 0
+        · linarith
+        · push Not at ht2
+          have : t + 2 ≤ √(t ^ 2 - 4 * β) := by
+            apply Real.le_sqrt_of_sq_le
+            nlinarith
+          linarith
+      have := h z (by
+        have : ((z : ℂ)) ^ 2 - (t : ℂ) * (z : ℂ) + (β : ℂ) = ((z ^ 2 - t * z + β : ℝ) : ℂ) := by
+          push_cast; ring
+        rw [this, hroot]; simp)
+      rw [Complex.norm_real, Real.norm_eq_abs] at this
+      have : |z| ≥ 1 := by rw [abs_of_neg (by linarith)]; linarith
+      linarith
+    · -- t ≥ 1+β: the root (t + √Δ)/2 is ≥ 1
+      set z : ℝ := (t + √(t ^ 2 - 4 * β)) / 2 with hz
+      have hroot : z ^ 2 - t * z + β = 0 := by
+        rw [hz]; have := Real.sq_sqrt hΔ; nlinarith
+      have hz1 : 1 ≤ z := by
+        have hs := Real.sqrt_nonneg (t ^ 2 - 4 * β)
+        have hsq := Real.sq_sqrt hΔ
+        rw [hz]
+        by_cases ht2 : 2 - t ≤ 0
+        · linarith
+        · push Not at ht2
+          have : 2 - t ≤ √(t ^ 2 - 4 * β) := by
+            apply Real.le_sqrt_of_sq_le
+            nlinarith
+          linarith
+      have := h z (by
+        have : ((z : ℂ)) ^ 2 - (t : ℂ) * (z : ℂ) + (β : ℂ) = ((z ^ 2 - t * z + β : ℝ) : ℂ) := by
+          push_cast; ring
+        rw [this, hroot]; simp)
+      rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by linarith)] at this
+      linarith
+  · intro ht z hz
+    have hre := congrArg Complex.re hz
+    have him := congrArg Complex.im hz
+    simp [sq] at hre him
+    have hnorm : ‖z‖ ^ 2 = z.re * z.re + z.im * z.im := by
+      rw [Complex.sq_norm, Complex.normSq_apply]
+    have habs := abs_lt.mp ht
+    have hlt : ‖z‖ ^ 2 < 1 := by
+      rw [hnorm]
+      by_cases hy : z.im = 0
+      · -- real root
+        rw [hy] at hre ⊢
+        simp only [mul_zero, add_zero]
+        set x := z.re with hx
+        by_contra hcon
+        push Not at hcon
+        have hx1 : 1 ≤ x ∨ x ≤ -1 := by
+          by_contra h'
+          push Not at h'
+          nlinarith
+        rcases hx1 with hx1 | hx1
+        · nlinarith [mul_nonneg (sub_nonneg.2 hx1) (sub_nonneg.2 (le_of_lt (lt_of_lt_of_le hβ1 hx1)))]
+        · nlinarith [mul_nonneg (sub_nonneg.2 (show 1 ≤ -x by linarith))
+            (sub_nonneg.2 (show β ≤ -x by linarith))]
+      · -- complex conjugate pair: modulus squared equals β
+        have hx : z.re = t / 2 := by
+          have : z.im * (2 * z.re - t) = 0 := by linarith
+          rcases mul_eq_zero.mp this with h | h
+          · exact absurd h hy
+          · linarith
+        have : z.re * z.re + z.im * z.im = β := by
+          rw [hx] at hre ⊢; nlinarith
+        linarith
+    have h0 := norm_nonneg z
+    nlinarith
 
+/-- Uniformity over the curvature interval: for `s > 0` and `κ ≥ 1`,
+`|1 + β - sλ| < 1 + β` for every `λ ∈ [1, κ]` iff `s < 2(1+β)/κ`. -/
+theorem uniform_trace_condition (s β κ : ℝ) (hs : 0 < s) (hκ : 1 ≤ κ) :
+    (∀ l : ℝ, 1 ≤ l → l ≤ κ → |1 + β - s * l| < 1 + β) ↔ s < 2 * (1 + β) / κ := by
+  constructor
+  · intro h
+    have := abs_lt.mp (h κ hκ le_rfl)
+    rw [lt_div_iff₀ (by linarith)]
+    linarith
+  · intro h l hl1 hlκ
+    rw [lt_div_iff₀ (by linarith)] at h
+    rw [abs_lt]
+    constructor
+    · nlinarith
+    · nlinarith
 
-end pathwise
+/-- Lemma 2.2, combined form: all `A_λ(s,β)`, `λ ∈ [1,κ]`, are Schur stable iff
+`0 < s < 2(1+β)/κ`. -/
+theorem lemma_2_2 (s β κ : ℝ) (hs : 0 < s) (hβ0 : 0 < β) (hβ1 : β < 1) (hκ : 1 ≤ κ) :
+    (∀ l : ℝ, 1 ≤ l → l ≤ κ →
+        ∀ z : ℂ, z ^ 2 - ((1 + β - s * l : ℝ) : ℂ) * z + (β : ℂ) = 0 → ‖z‖ < 1)
+      ↔ s < 2 * (1 + β) / κ := by
+  rw [← uniform_trace_condition s β κ hs hκ]
+  constructor
+  · intro h l hl1 hlκ
+    exact (schur_quadratic _ β hβ0 hβ1).mp (h l hl1 hlκ)
+  · intro h l hl1 hlκ
+    exact (schur_quadratic _ β hβ0 hβ1).mpr (h l hl1 hlκ)
+
+/-- With `s = h^2(1+β)/2` and `h > 0`, the condition `s < 2(1+β)/κ` is `h < 2/√κ`. -/
+theorem step_size_form (h β κ : ℝ) (hh : 0 < h) (hβ0 : 0 < β) (hκ : 0 < κ) :
+    h ^ 2 * (1 + β) / 2 < 2 * (1 + β) / κ ↔ h < 2 / √κ := by
+  have hsκ : 0 < √κ := Real.sqrt_pos.mpr hκ
+  have h1 : h ^ 2 * (1 + β) / 2 < 2 * (1 + β) / κ ↔ h ^ 2 * κ < 4 := by
+    rw [div_lt_div_iff₀ (by norm_num) hκ]
+    constructor <;> intro h' <;> nlinarith
+  rw [h1, lt_div_iff₀ hsκ]
+  constructor
+  · intro h'
+    nlinarith [Real.sq_sqrt hκ.le, Real.sqrt_nonneg κ]
+  · intro h'
+    have hsq := Real.sq_sqrt hκ.le
+    have hp : 0 < h * √κ := mul_pos hh hsκ
+    have h2 : (h * √κ) * (h * √κ) < 2 * 2 := mul_lt_mul'' h' h' hp.le hp.le
+    have h3 : (h * √κ) * (h * √κ) = h ^ 2 * κ := by
+      calc (h * √κ) * (h * √κ) = h ^ 2 * √κ ^ 2 := by ring
+        _ = h ^ 2 * κ := by rw [hsq]
+    linarith
+
+/-- Second assertion of Lemma 2.2 (algebraic part): if `sκ ≥ 2(1+β)`, the characteristic
+polynomial at `λ = κ` has a real root `z₋ ≤ -1`. -/
+theorem real_root_le_neg_one (s β κ : ℝ) (hβ0 : 0 < β) (hβ1 : β < 1)
+    (hsκ : 2 * (1 + β) ≤ s * κ) :
+    ∃ z : ℝ, z ≤ -1 ∧ z ^ 2 - (1 + β - s * κ) * z + β = 0 := by
+  set t := 1 + β - s * κ with ht
+  have ht' : t ≤ -(1 + β) := by rw [ht]; linarith
+  have hΔ : 0 ≤ t ^ 2 - 4 * β := by nlinarith
+  refine ⟨(t - √(t ^ 2 - 4 * β)) / 2, ?_, ?_⟩
+  · have hs := Real.sqrt_nonneg (t ^ 2 - 4 * β)
+    by_cases ht2 : t + 2 ≤ 0
+    · linarith
+    · push Not at ht2
+      have : t + 2 ≤ √(t ^ 2 - 4 * β) := by
+        apply Real.le_sqrt_of_sq_le
+        nlinarith
+      linarith
+  · have := Real.sq_sqrt hΔ; nlinarith
+
+namespace Section2
 
 /-! ## B. The quadratic case: matrices (2.7), N, (1.10), (2.8), (2.9) -/
 

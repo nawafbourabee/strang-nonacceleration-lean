@@ -1,4 +1,12 @@
-import StrangNonAcceleration.Corollary13
-import StrangNonAcceleration.Tier1
-import StrangNonAcceleration.Section2
-import StrangNonAcceleration.Section3
+import StrangNonAcceleration.Corollary1_2
+import StrangNonAcceleration.Corollary1_3
+import StrangNonAcceleration.Proposition2_1
+import StrangNonAcceleration.Lemma2_2
+import StrangNonAcceleration.Theorem3_1
+import StrangNonAcceleration.Lemma3_2
+import StrangNonAcceleration.Lemma3_3
+import StrangNonAcceleration.Lemma4_4
+import StrangNonAcceleration.Section4_5
+import StrangNonAcceleration.Lemma4_6
+import StrangNonAcceleration.Proposition4_7
+import StrangNonAcceleration.Theorem5_1

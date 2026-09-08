@@ -13,7 +13,7 @@ content of the two cited theorems (Markov kernels, total variation and
 Wasserstein distances, invariant laws) is not formalized; it enters through
 real-valued functions and hypotheses that record precisely the properties the
 proof in Section 5 of the paper uses.  The correspondence is spelled out in the
-docstrings and in the accompanying note.
+docstrings and in the README.
 
 Conventions.  Total variation distances, Wasserstein distances and mixing times
 are represented by real-valued functions of the iteration number.  `tmix TV ε`
