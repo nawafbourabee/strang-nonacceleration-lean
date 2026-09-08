@@ -1,0 +1,33 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSfL https://github.com/leanprover/elan/releases/latest/download/elan-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          ./elan-init -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Check for sorry
+        run: |
+          if grep -rn --include='*.lean' -w 'sorry' StrangNonAcceleration StrangNonAcceleration.lean; then
+            echo 'sorry found'; exit 1
+          fi
+      - name: Get Mathlib cache
+        run: lake exe cache get
+      - name: Build
+        run: lake build
+      - name: Print axioms
+        run: lake env lean StrangNonAcceleration/Axioms.lean | tee axioms.txt
+      - name: Check axioms
+        run: |
+          if grep -v 'propext, Classical.choice, Quot.sound' axioms.txt | grep -q 'depends on axioms'; then
+            echo 'unexpected axiom'; exit 1
+          fi
+          test "$(grep -c 'depends on axioms' axioms.txt)" -eq 100
