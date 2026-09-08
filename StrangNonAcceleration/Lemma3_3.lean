@@ -17,6 +17,9 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Complex.Basic
 import StrangNonAcceleration.Theorem3_1
 import StrangNonAcceleration.Lemma3_2
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import StrangNonAcceleration.Section1
+import StrangNonAcceleration.Corollary1_3
 
 open Real
 
@@ -285,3 +288,328 @@ theorem lemma33_step3_m3 (β κ : ℝ) (hβ0 : 0 ≤ β) (hβ1 : β ≤ 1) (hκ 
 end Lemma33
 
 end OBABO.Section3
+
+namespace OBABO
+
+/-! ## Lemma 3.3 in full
+
+The proof of Lemma 3.3 uses three facts from [22] besides Lemma 3.2 and the level-set bounds
+of `Section1.lean`: Lemma B.7 (`one_sub_cos_ratio_le`), Lemma B.8 (`exists_m0`, in the form
+with `m₀ ≥ 3` that the paper derives from `β > 1/5`), Lemma B.9 (`βMinus_le_of_ratio`), and
+the computation leading to [22, equation (29)] (`sMinus_le_bound`). All are proved here from
+the definitions of `Lemma3_2.lean`. -/
+
+/-- [22, Lemma B.7]: `1 - cos θ_K ≤ (3/2)(1 - cos θ_{K+1})` for `K ≥ 2`. -/
+theorem one_sub_cos_ratio_le (K : ℕ) (hK : 2 ≤ K) :
+    1 - cos (θm K) ≤ 3 / 2 * (1 - cos (θm (K + 1))) := by
+  have h5 := sqrt5_bounds
+  rcases Nat.lt_or_ge K 5 with hlt | hge
+  · interval_cases K
+    · -- K = 2: cos θ_2 = -1, cos θ_3 = -1/2
+      have h2 : θm 2 = π := by unfold θm; push_cast; ring
+      have h3 : θm 3 = 2 * π / 3 := by unfold θm; norm_num
+      rw [h2, h3, Real.cos_pi, cos_two_pi_div_three]; norm_num
+    · -- K = 3: cos θ_3 = -1/2, cos θ_4 = 0
+      have h3 : θm 3 = 2 * π / 3 := by unfold θm; norm_num
+      have h4 : θm 4 = π / 2 := by unfold θm; ring
+      rw [h3, h4, cos_two_pi_div_three, Real.cos_pi_div_two]; norm_num
+    · -- K = 4: cos θ_4 = 0, cos θ_5 = (√5 - 1)/4
+      have h4 : θm 4 = π / 2 := by unfold θm; ring
+      have h5' : θm 5 = 2 * π / 5 := by unfold θm; norm_num
+      rw [h4, h5', Real.cos_pi_div_two, cos_two_pi_div_five]
+      nlinarith
+  · have h := one_sub_cos_ratio K (by omega)
+    have hK' : (5 : ℝ) ≤ K := by exact_mod_cast hge
+    have hfrac : ((K + 1 : ℝ) / K) ^ 2 ≤ 3 / 2 := by
+      have : (K + 1 : ℝ) / K ≤ 6 / 5 := by
+        rw [div_le_div_iff₀ (by linarith) (by norm_num)]; linarith
+      have h0 : (0 : ℝ) ≤ (K + 1 : ℝ) / K := by positivity
+      nlinarith
+    have hc1 := cos_θm_lt_one (K + 1) (by omega)
+    have h0 : 0 ≤ 1 - cos (θm (K + 1)) := by linarith
+    calc 1 - cos (θm K) ≤ ((K + 1 : ℝ) / K) ^ 2 * (1 - cos (θm (K + 1))) := h
+      _ ≤ 3 / 2 * (1 - cos (θm (K + 1))) := mul_le_mul_of_nonneg_right hfrac h0
+
+/-- `cos θ_m` is nondecreasing in `m ≥ 2`. -/
+theorem cos_θm_mono (m n : ℕ) (hm : 2 ≤ m) (hmn : m ≤ n) : cos (θm m) ≤ cos (θm n) := by
+  apply Real.cos_le_cos_of_nonneg_of_le_pi (θm_pos n (by omega)).le
+  · unfold θm
+    have : (2 : ℝ) ≤ m := by exact_mod_cast hm
+    rw [div_le_iff₀ (by positivity)]; nlinarith [Real.pi_pos]
+  · unfold θm
+    have hm' : (0 : ℝ) < m := by exact_mod_cast (by omega : 0 < m)
+    have : (m : ℝ) ≤ n := by exact_mod_cast hmn
+    exact div_le_div_of_nonneg_left (by positivity) hm' this
+
+/-- [22, Lemma B.8], with `m₀ ≥ 3` (the paper obtains `m₀ ≥ 3` from `β > 1/5`; `β ≥ 1/10`
+suffices): for `1/10 ≤ β < 1` there is `m₀ ≥ 3` with
+`(2/3)(1 - β) ≤ β - cos θ_{m₀} ≤ (3/2)(1 - β)`. -/
+theorem exists_m0 (β : ℝ) (hβ0 : 1 / 10 ≤ β) (hβ1 : β < 1) :
+    ∃ m₀ : ℕ, 3 ≤ m₀ ∧ 2 / 3 * (1 - β) ≤ β - cos (θm m₀) ∧
+      β - cos (θm m₀) ≤ 3 / 2 * (1 - β) := by
+  set t := β - 2 / 3 * (1 - β) with ht
+  have ht1 : t < 1 := by linarith
+  -- the predicate `3 ≤ k ∧ t < cos θ_{k+1}` holds for large `k` since `cos x ≥ 1 - x²/2`
+  have hex : ∃ k : ℕ, 3 ≤ k ∧ t < cos (θm (k + 1)) := by
+    set N : ℕ := ⌈2 * π ^ 2 / (1 - t)⌉₊ + 4 with hN
+    refine ⟨N - 1, by omega, ?_⟩
+    have hN1 : N - 1 + 1 = N := by omega
+    rw [hN1]
+    have hNge : 2 * π ^ 2 / (1 - t) < N := by
+      have := Nat.le_ceil (2 * π ^ 2 / (1 - t))
+      have : (⌈2 * π ^ 2 / (1 - t)⌉₊ : ℝ) + 4 = (N : ℝ) := by rw [hN]; push_cast; ring
+      linarith
+    have hNpos : (1 : ℝ) ≤ N := by
+      have : (4 : ℕ) ≤ N := by omega
+      exact_mod_cast (by omega : 1 ≤ N)
+    have hsq : (N : ℝ) ≤ (N : ℝ) ^ 2 := by nlinarith
+    have hθ : θm N ^ 2 / 2 = 2 * π ^ 2 / (N : ℝ) ^ 2 := by
+      unfold θm; field_simp
+    have hb := Real.one_sub_sq_div_two_le_cos (x := θm N)
+    rw [hθ] at hb
+    have : 2 * π ^ 2 / (N : ℝ) ^ 2 < 1 - t := by
+      rw [div_lt_iff₀ (by positivity)]
+      rw [div_lt_iff₀ (by linarith)] at hNge
+      nlinarith [Real.pi_pos]
+    linarith
+  classical
+  let K := Nat.find hex
+  have hK : 3 ≤ K ∧ t < cos (θm (K + 1)) := Nat.find_spec hex
+  have hmin : ∀ k, k < K → ¬(3 ≤ k ∧ t < cos (θm (k + 1))) := fun k hk => Nat.find_min hex hk
+  refine ⟨K, hK.1, ?_, ?_⟩
+  · -- lower bound: `cos θ_K ≤ t`
+    have hcK : cos (θm K) ≤ t := by
+      rcases Nat.eq_or_lt_of_le hK.1 with h3 | h3
+      · rw [← h3]
+        have : θm 3 = 2 * π / 3 := by unfold θm; norm_num
+        rw [this, cos_two_pi_div_three]; linarith
+      · have := hmin (K - 1) (by omega)
+        push Not at this
+        have h := this (by omega)
+        have e : K - 1 + 1 = K := by omega
+        rw [e] at h; exact h
+    linarith
+  · -- upper bound from Lemma B.7 and `t < cos θ_{K+1}`
+    have h7 := one_sub_cos_ratio_le K (by omega)
+    have : 1 - cos (θm (K + 1)) < 1 - t := by linarith [hK.2]
+    nlinarith
+
+/-- If the quadratic `a β² + b β + e` (with `a > 0`) is nonnegative at `β₁` and `β₁` lies to
+the right of its vertex, then `β₁` is at least its larger root. -/
+theorem βMinus_le_of (κ β₁ : ℝ) (m : ℕ) (hu : κ⁻¹ < 1 / 2)
+    (hD : 0 ≤ Disc β₁ κ (cos (θm m)))
+    (hV : 0 ≤ 2 * discA κ⁻¹ (cos (θm m)) * β₁ + discB κ⁻¹ (cos (θm m))) :
+    βMinus κ m ≤ β₁ := by
+  set u := κ⁻¹
+  set c := cos (θm m)
+  have ha := discA_pos u c hu
+  set a := discA u c
+  set b := discB u c
+  set e := discC u c
+  rw [Disc_eq] at hD
+  unfold βMinus
+  rw [div_le_iff₀ (by linarith)]
+  have h2 := four_mul_quadratic a b e β₁
+  have h3 : b ^ 2 - 4 * a * e ≤ (2 * a * β₁ + b) ^ 2 := by nlinarith
+  have h4 : √(b ^ 2 - 4 * a * e) ≤ 2 * a * β₁ + b := by
+    calc √(b ^ 2 - 4 * a * e) ≤ √((2 * a * β₁ + b) ^ 2) := Real.sqrt_le_sqrt h3
+      _ = 2 * a * β₁ + b := Real.sqrt_sq hV
+  linarith
+
+/-- [22, Lemma B.9] in the form used by the paper: for `u = κ⁻¹ ≤ 1/16` and
+`β ≤ 1` with `β - cos θ_m ≥ (2/3)(1 - β)`, one has `β ≥ β_-(m; κ)` (the hypothesis `m ≥ 2` of
+[22] is not needed). -/
+theorem βMinus_le_of_ratio (β κ : ℝ) (m : ℕ) (hκ0 : 0 < κ⁻¹) (hκ : κ⁻¹ ≤ 1 / 16)
+    (hβ1 : β ≤ 1) (hratio : 2 / 3 * (1 - β) ≤ β - cos (θm m)) :
+    βMinus κ m ≤ β := by
+  set u := κ⁻¹ with hu
+  set c := cos (θm m) with hc
+  have hc1 : c ≤ 1 := Real.cos_le_one _
+  have hc0 : -1 ≤ c := Real.neg_one_le_cos _
+  -- `β ≥ β₁ := 1 - (3/5)(1 - c)`
+  set β₁ := 1 - 3 / 5 * (1 - c) with hβ₁
+  have hββ₁ : β₁ ≤ β := by linarith
+  refine le_trans (βMinus_le_of κ β₁ m (by linarith) ?_ ?_) hββ₁
+  · -- `Disc β₁ = (1 - c)² [4(1 - 16u)(1 - u) + 3u(1 - c)(10 - u(13 + 3c))]/25 ≥ 0`
+    unfold Disc Acoef
+    rw [← hu, ← hc]
+    have key : (β₁ - c + u * (1 - β₁ * c)) ^ 2 - 2 * u * (1 - c) * (1 + β₁ ^ 2 - 2 * β₁ * c)
+        = (1 - c) ^ 2 * (4 * (1 - 16 * u) * (1 - u) + 3 * u * (1 - c) * (10 - u * (13 + 3 * c))) / 25 := by
+      rw [hβ₁]; ring
+    rw [key]
+    apply div_nonneg _ (by norm_num)
+    apply mul_nonneg (sq_nonneg _)
+    have h1 : 0 ≤ 4 * (1 - 16 * u) * (1 - u) := by
+      apply mul_nonneg (by linarith) (by linarith)
+    have h2 : 0 ≤ 3 * u * (1 - c) * (10 - u * (13 + 3 * c)) := by
+      apply mul_nonneg (by positivity)
+      nlinarith
+    linarith
+  · -- `2 a β₁ + b = (2/5)(1 - c)(2 + u + 5cu - 5cu² - 3c²u²) ≥ 0`
+    unfold discA discB
+    rw [← hu, ← hc]
+    have key : 2 * (1 - 2 * u + c ^ 2 * u ^ 2) * β₁ +
+        (-2 * c + 2 * u + 4 * c * u - 2 * c ^ 2 * u - 2 * c * u ^ 2)
+        = 2 / 5 * (1 - c) * (2 + u + 5 * c * u - 5 * c * u ^ 2 - 3 * c ^ 2 * u ^ 2) := by
+      rw [hβ₁]; ring
+    rw [key]
+    apply mul_nonneg (by linarith)
+    have hu2 : u ^ 2 ≤ u / 16 := by nlinarith
+    nlinarith [sq_nonneg c, mul_nonneg hκ0.le (sq_nonneg c)]
+
+/-- The computation leading to [22, equation (29)]: if `(2/3)(1 - β) ≤ β - c ≤ (3/2)(1 - β)`,
+`0 < β < 1`, and the roots are real, then
+`A - √(A² - E) ≤ E/(β - c) ≤ (50/3) u (1 - β)`, where `A = A_m`, `E = 2u(1 - c)(1 + β² - 2βc)`
+and `u = κ⁻¹`. -/
+theorem sMinus_le_bound (β κ c : ℝ) (hκ0 : 0 < κ⁻¹) (hβ0 : 0 < β) (hβ1 : β < 1)
+    (hlo : 2 / 3 * (1 - β) ≤ β - c) (hhi : β - c ≤ 3 / 2 * (1 - β))
+    (hD : 0 ≤ Disc β κ c) :
+    Acoef β κ c - √(Disc β κ c) ≤ 50 / 3 * κ⁻¹ * (1 - β) := by
+  set u := κ⁻¹ with hu
+  set d := β - c with hd
+  have hd0 : 0 < d := by linarith
+  have hc1 : c < 1 := by linarith
+  have hA : d ≤ Acoef β κ c := by
+    unfold Acoef; rw [← hu]
+    have : 0 ≤ 1 - β * c := by nlinarith
+    nlinarith
+  have hApos : 0 < Acoef β κ c := lt_of_lt_of_le hd0 hA
+  set A := Acoef β κ c with hAdef
+  set E := 2 * u * (1 - c) * (1 + β ^ 2 - 2 * β * c) with hE
+  have hE0 : 0 ≤ E := by
+    rw [hE]
+    apply mul_nonneg (mul_nonneg (by positivity) (by linarith))
+    nlinarith
+  have hDisc : Disc β κ c = A ^ 2 - E := by unfold Disc; rw [← hu]
+  rw [hDisc] at hD ⊢
+  -- `A - √(A² - E) ≤ E/A`
+  have h1 : A - E / A ≤ √(A ^ 2 - E) := by
+    have hsq : (A - E / A) ^ 2 ≤ A ^ 2 - E := by
+      have : (A - E / A) ^ 2 = A ^ 2 - 2 * E + (E / A) ^ 2 := by field_simp; ring
+      rw [this]
+      have : (E / A) ^ 2 ≤ E := by
+        rw [div_pow, div_le_iff₀ (by positivity)]
+        nlinarith
+      linarith
+    exact le_trans (le_abs_self _) (Real.abs_le_sqrt hsq)
+  have h2 : A - √(A ^ 2 - E) ≤ E / A := by linarith
+  -- `E/A ≤ E/d ≤ (50/3) u (1 - β)`
+  have h3 : E / A ≤ E / d := div_le_div_of_nonneg_left hE0 hd0 hA
+  have h4 : E / d ≤ 50 / 3 * u * (1 - β) := by
+    rw [div_le_iff₀ hd0, hE]
+    have hcd : c = β - d := by rw [hd]; ring
+    rw [hcd]
+    set w := 1 - β with hw
+    have hw0 : 0 < w := by linarith
+    have hβw : β = 1 - w := by rw [hw]; ring
+    -- `2(w + d)(w(1 + β) + 2βd) ≤ 4(w + d)² ≤ (50/3) w d`
+    have e1 : 2 * u * (1 - (β - d)) * (1 + β ^ 2 - 2 * β * (β - d))
+        = u * (2 * (w + d) * (w * (1 + β) + 2 * β * d)) := by rw [hβw]; ring
+    rw [e1]
+    have h5 : 2 * (w + d) * (w * (1 + β) + 2 * β * d) ≤ 4 * (w + d) ^ 2 := by
+      have : w * (1 + β) + 2 * β * d ≤ 2 * (w + d) := by nlinarith
+      nlinarith
+    have h6 : 4 * (w + d) ^ 2 ≤ 50 / 3 * w * d := by
+      nlinarith [mul_nonneg (by linarith : 0 ≤ 3 * d - 2 * w) (by linarith : 0 ≤ 3 * w - 2 * d)]
+    calc u * (2 * (w + d) * (w * (1 + β) + 2 * β * d)) ≤ u * (50 / 3 * w * d) := by
+          apply mul_le_mul_of_nonneg_left _ hκ0.le; linarith
+      _ = 50 / 3 * u * w * d := by ring
+  linarith
+
+/-- **Lemma 3.3** (existence of a period with `P_m(s, β; κ) < 0`). Let `C⋆ > C_GTD = (3 + √5)²`,
+`κ ≥ 2 C⋆`, and let `(s, β) ∈ (0, ∞) × (0, 1)` satisfy the numerical stability condition
+(2.10), `s < 2(1 + β)/κ`, with `ρ_q(s, β; κ) < q_κ = (1 - C⋆/κ)/(1 + C⋆/κ)`. Then there is an
+integer `m ≥ 3` with `P_m(s, β; κ) < 0`. -/
+theorem lemma_3_3 (Cs κ s β : ℝ) (hC : (3 + √5) ^ 2 < Cs) (hκ : 2 * Cs ≤ κ)
+    (hs : 0 < s) (hβ0 : 0 < β) (hβ1 : β < 1) (hstab : s < 2 * (1 + β) / κ)
+    (hρ : ρq s β κ < q Cs κ) :
+    ∃ m : ℕ, 3 ≤ m ∧ Pcyc s β κ (cos (θm m)) < 0 := by
+  have h5 := sqrt5_bounds
+  have hC27 : 27 < Cs := lt_trans C_GTD_gt_27 hC
+  have hκ0 : 0 < κ := by linarith
+  have hκ1 : 1 < κ := by linarith
+  have hκ54 : 54 ≤ κ := by linarith
+  set u := κ⁻¹ with hu
+  have hu0 : 0 < u := inv_pos.2 hκ0
+  have huC : u ≤ 1 / (2 * Cs) := by
+    rw [hu, inv_le_comm₀ hκ0 (by positivity)]; simpa using hκ
+  obtain ⟨hu1, hu16⟩ := u_small Cs u hC hu0 huC
+  have hu54 : u ≤ 1 / 54 := by rw [hu, inv_le_comm₀ hκ0 (by norm_num)]; simpa using hκ54
+  have hCu : Cs * u ≤ 1 / 2 := by
+    calc Cs * u ≤ Cs * (1 / (2 * Cs)) := mul_le_mul_of_nonneg_left huC (by linarith)
+      _ = 1 / 2 := by field_simp
+  have hCu1 : Cs * u < 1 := by linarith
+  -- `q_κ = (1 - C⋆ u)/(1 + C⋆ u)`, `g = (1 - u)/(1 + u)`, `ρ = ρ_q(s, β; κ)`
+  have hq : q Cs κ = (1 - Cs * u) / (1 + Cs * u) := by
+    unfold q; rw [show Cs / κ = Cs * u by rw [hu, div_eq_mul_inv]]
+  set g := (1 - u) / (1 + u) with hg
+  set ρ := ρq s β κ with hρdef
+  have hqg : q Cs κ < g := by
+    rw [hq, hg]; exact frac_anti (Cs * u) u (by linarith) (by nlinarith)
+  have hg1 : g < 1 := by rw [hg, div_lt_one (by linarith)]; linarith
+  have hρ1 : ρ < 1 := by linarith
+  obtain ⟨hρ0, hβρ, hslow, -⟩ := ρq_facts s β κ hβ0 hs.le hκ1.le
+  -- Step 1: `β > 13/42`
+  have hell := ell_ρq_le s β κ hβ0 hβ1 hs.le hκ1 hρ1
+  simp only at hell
+  have hstar := rho_star_le_ρq s β κ hβ0 hβ1 hs.le hκ1 hρ1
+  have hellq : ell g (q Cs κ) < ell g ρ := by
+    rw [hg]
+    exact ell_strictAnti u ρ (q Cs κ) hu0 (by linarith) hstar hρ (by rw [← hg]; exact hqg)
+  have hnum := step1_numerics Cs u hu0 hC27 hCu
+  rw [← hq] at hnum
+  have hβ13 : 13 / 42 < β := by
+    have : ell g ρ ≤ β := by unfold ell; rw [hg]; exact hell
+    linarith [hnum.2.2]
+  -- Step 2: `s > (50/3) u (1 - β)` and `s > s_-(β, m₀)` for the `m₀` of [22, Lemma B.8]
+  have hρ50 : ρ < (1 - 50 / 3 * u) / (1 + 50 / 3 * u) := by
+    calc ρ < q Cs κ := hρ
+      _ = (1 - Cs * u) / (1 + Cs * u) := hq
+      _ < (1 - 50 / 3 * u) / (1 + 50 / 3 * u) :=
+        frac_anti (Cs * u) (50 / 3 * u) (by linarith) (by nlinarith)
+  have hs50 : 50 / 3 * u * (1 - β) < s :=
+    Section3.lemma33_step2_s_lower u ρ β s hu0 hu16 hρ0 hρ50 hβρ hslow
+  obtain ⟨m₀, hm₀3, hlo, hhi⟩ := exists_m0 β (by linarith) hβ1
+  -- Step 3: every `3 ≤ m ≤ m₀` has `β ≥ β_-(m; κ)`
+  have hadm : ∀ m, 3 ≤ m → m ≤ m₀ → βMinus κ m ≤ β := by
+    intro m hm3 hmm₀
+    apply βMinus_le_of_ratio β κ m hu0 hu16.le hβ1.le
+    have := cos_θm_mono m m₀ (by omega) hmm₀
+    linarith
+  have hDisc : ∀ m, 3 ≤ m → m ≤ m₀ → 0 ≤ Disc β κ (cos (θm m)) := fun m hm3 hmm₀ =>
+    Disc_nonneg_of_βMinus_le β κ m (by linarith) (hadm m hm3 hmm₀)
+  have hm₀s : sMinus β κ m₀ < s := by
+    unfold sMinus
+    have := sMinus_le_bound β κ (cos (θm m₀)) hu0 hβ0 hβ1 hlo hhi (hDisc m₀ hm₀3 le_rfl)
+    rw [← hu] at this
+    linarith
+  -- the minimal period `m̄` with `s > s_-(β, m̄)`
+  have hex : ∃ m : ℕ, 3 ≤ m ∧ m ≤ m₀ ∧ sMinus β κ m < s := ⟨m₀, hm₀3, le_rfl, hm₀s⟩
+  classical
+  set mb := Nat.find hex with hmb
+  have hQ : 3 ≤ mb ∧ mb ≤ m₀ ∧ sMinus β κ mb < s := Nat.find_spec hex
+  have hmin : ∀ m, m < mb → ¬(3 ≤ m ∧ m ≤ m₀ ∧ sMinus β κ m < s) :=
+    fun m hm => Nat.find_min hex hm
+  have hupper : s < sPlus β κ mb := by
+    rcases Nat.eq_or_lt_of_le hQ.1 with h3 | h4
+    · -- `m̄ = 3`: `s < 2(1+β)/κ < 1/2 < s_+(β, 3)`
+      rw [← h3]
+      have hθ3 : θm 3 = 2 * π / 3 := by unfold θm; norm_num
+      have h := Section3.lemma33_step3_m3 β κ hβ0.le hβ1.le (by linarith)
+      simp only [sPlus, Acoef, Disc]
+      rw [hθ3]
+      linarith [h.1, h.2]
+    · -- `m̄ ≥ 4`: otherwise Lemma 3.2 contradicts the minimality of `m̄`
+      by_contra hcon
+      push Not at hcon
+      have h32 := lemma_3_2 (mb - 1) (by omega) β κ hκ0 hu1 hβ0 hβ1
+        (by rw [show mb - 1 + 1 = mb by omega]; exact hadm mb hQ.1 hQ.2.1)
+      rw [show mb - 1 + 1 = mb by omega] at h32
+      exact hmin (mb - 1) (by omega) ⟨by omega, by omega, lt_of_lt_of_le h32 hcon⟩
+  refine ⟨mb, hQ.1, ?_⟩
+  rw [Pcyc_eq_mul_roots s β κ mb (hDisc mb hQ.1 hQ.2.1)]
+  apply mul_neg_of_pos_of_neg
+  · linarith [hQ.2.2]
+  · linarith
+
+end OBABO

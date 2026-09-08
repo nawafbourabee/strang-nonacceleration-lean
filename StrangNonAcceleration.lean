@@ -1,3 +1,4 @@
+import StrangNonAcceleration.Section1
 import StrangNonAcceleration.Corollary1_2
 import StrangNonAcceleration.Corollary1_3
 import StrangNonAcceleration.Proposition2_1

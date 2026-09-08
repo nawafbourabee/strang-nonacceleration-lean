@@ -1,5 +1,15 @@
 import StrangNonAcceleration
 -- Every statement below should report only [propext, Classical.choice, Quot.sound].
+-- Section1.lean
+#print axioms OBABO.norm_root_le
+#print axioms OBABO.exists_root_norm_eq
+#print axioms OBABO.spectralRadius_Amat
+#print axioms OBABO.rootRad_le_iff
+#print axioms OBABO.sqrt_le_ρq
+#print axioms OBABO.ρq_le_iff
+#print axioms OBABO.ρq_facts
+#print axioms OBABO.ell_ρq_le
+#print axioms OBABO.rho_star_le_ρq
 -- Corollary1_2.lean
 #print axioms OBABO.log_ratio_le
 #print axioms OBABO.log_inv_q_le
@@ -85,6 +95,13 @@ import StrangNonAcceleration
 #print axioms OBABO.Section3.lemma33_step2
 #print axioms OBABO.Section3.lemma33_step2_s_lower
 #print axioms OBABO.Section3.lemma33_step3_m3
+#print axioms OBABO.one_sub_cos_ratio_le
+#print axioms OBABO.cos_θm_mono
+#print axioms OBABO.exists_m0
+#print axioms OBABO.βMinus_le_of
+#print axioms OBABO.βMinus_le_of_ratio
+#print axioms OBABO.sMinus_le_bound
+#print axioms OBABO.lemma_3_3
 -- Lemma4_4.lean
 #print axioms OBABO.Section3.geometric_decay_of_spectralRadius_lt_one
 #print axioms OBABO.Section3.duhamel
