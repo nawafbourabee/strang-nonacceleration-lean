@@ -7,7 +7,7 @@ Nawaf Bou-Rabee, arXiv:2608.25279.
 
 ## Scope
 
-The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemmas 3.2 and 3.3, the cycle geometry of Theorem 3.1(ii), the mollification of Proposition 3.4, and the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses. The main theorems of the paper are not themselves formalized.
+The algebraic identities, the numerical constants, the Schur stability criterion of Lemma 2.2, Lemmas 3.2 and 3.3, the cycle geometry of Theorem 3.1(ii), the mollification of Proposition 3.4, and the deterministic attraction estimates underlying Lemmas 4.4 and 4.6 and Theorem 5.1 are verified in Lean 4 with Mathlib. The probabilistic arguments of Section 4 and the three imported results, [22, Theorem 3.5], [30, Theorem 5.2] and [6, Corollary 3.3], are not formalized and enter as hypotheses.
 
 Reference numbers are those of the current paper source (`obabo_non_acceleration.tex`, September 8, 2026), taken from its `.aux` file. Citation numbers: [22] Goujaud, Taylor and Dieuleveut; [30] Leimkuhler, Paulin and Whalley; [6] Bou-Rabee, Cox and Schieven.
 
