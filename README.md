@@ -32,7 +32,6 @@ Each Lean file is named after the statement of the paper it covers (a dot in a s
 | `StrangNonAcceleration/Proposition4_7.lean` | Proposition 4.7: origin tube, disjointness, (4.26), (4.27), the constants in (4.28) |
 | `StrangNonAcceleration/Theorem5_1.lean` | Theorem 5.1: the tuning, the constants, the case n <= 24, the assembly of (5.1) |
 | `StrangNonAcceleration/Axioms.lean` | `#print axioms` for the 100 statements listed in the table below |
-| `numerics/lemma33_grid_check.py` | Numerical sanity check of Lemma 3.3 at isolated grid points, and one exact symbolic instance (see below) |
 
 ## Build
 
@@ -60,14 +59,6 @@ Every statement in the table below reports only the three standard axioms of Lea
 'OBABO.Cycle.lemma_4_6_origin' depends on axioms: [propext, Classical.choice, Quot.sound]
 'OBABO.Diffusive.γ_mul_h' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
-
-## Numerical checks (not verification)
-
-`numerics/lemma33_grid_check.py` (output in `numerics/lemma33_grid_check_out.txt`, runtime about seven minutes) has two parts.
-
-Part 1 is an exact symbolic evaluation, in the field Q(sqrt 2) with sympy, of one instance of the roots-of-unity construction: m = 8, kappa = 1000, C_star = 28, beta = 881/1000, s = 1879/500000. At this instance it checks numerical stability, rho_q < q_kappa, P_8(s, beta; kappa) < 0, the negativity of I_{0,j} for j = 1, ..., 7 from the definition and from (3.9), identity (3.11), the cycle equation at every cycle point, r_max as an exact algebraic number, the projection identity at 400 exact rational sample points inside the balls, and the spectral radius condition of Assumption 2. This is an example, not coverage of the parameter domain.
-
-Part 2 evaluates every inequality in the proof of Lemma 3.3, including the ones imported from [22], at isolated grid points: kappa in {10^3, 3 x 10^3, 10^4, 10^5, 10^6}, 50 values of beta and 50 values of s per kappa, keeping the points inside the hypothesis region of the lemma, which gives 2,901 points in total. Interval arithmetic (mpmath, 40 digits) is used only to make each pointwise evaluation rigorous. The grid points are isolated; they do not form boxes covering the parameter domain, so this part is a numerical sanity check and not a verification of Lemma 3.3. Steps 2 and 3 of Lemma 3.3 are formalized in `Lemma3_3.lean` (`lemma33_step2`, `lemma33_step2_s_lower`, `lemma33_step3_m3`); the steps that invoke [22] are not.
 
 ## Correspondence table
 
